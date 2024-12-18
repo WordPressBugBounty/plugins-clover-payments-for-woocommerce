@@ -1,36 +1,36 @@
 === Clover Payments for WooCommerce===
 Contributors: cloverecommerce
-Tags: clover,clover payments
+Tags: clover, clover payments, credit card, payment request
 Plugin Name: Clover Payments for WooCommerce
 Plugin URI: https://wordpress.org/plugins/clover-payments-for-woocommerce/
-Description: Accepting payments in Woo Commerce using Clover eCommerce.
-Version: 1.0.12
-Requires at least: 5.9.3
-Requires PHP: 7.4 or Higher
+Description: Accepting payments in WooCommerce using Clover eCommerce.
+Version: 2.0.0
+Requires at least: 6.1
+Tested up to: 6.7
+Requires PHP: 7.4
 Author: Clover eCommerce
 Author URI: https://www.clover.com
-License: Clear BSD
-License URI : https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
+License: BSD-3-Clause-Clear
+License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
 Text Domain: woo-clv-payments
-Domain Path: /i18n/languages/
-Tested up to: 6.5
-Stable tag: 1.0.12
+Domain Path: /languages
+Stable tag: 2.0.0
 
-The Clover Payments plugin enables merchants that use Woocommerce to process online card payments using Clover.
+The Clover Payments plugin enables merchants that use WooCommerce to process online card payments using Clover.
 
 == Description ==
 
-The WordPress plugin from Clover allows a merchant using a WordPress based app like Woocommerce
+The WordPress plugin from Clover allows a merchant using a WordPress based app like WooCommerce
 to securely collect card information from buyers and process the payment using their Clover merchant account.
-The Payment extension uses an iframe to collect card information. An associated JavaScript tokenizes the card
-details by directly communicating with a Clover’s servers. The payment is processed using this token and the
-card details are never  saved on WordPress or the merchant’s servers. Therefore, this plug-in does not contribute
+The payment extension uses iframes to collect card information. Card details are the tokenized by directly
+communicating with a Clover’s servers. The payment is processed using this token and the
+card details are never saved on WordPress or the merchant’s servers. Therefore, this plug-in does not contribute
 to the PCI scope of a merchant’s eCommerce site. The plug-in is free for merchants to use and transactions processed
-using this plug-in will be charged under the merchant’s account at Clover.
+using this plugin will be charged under the merchant’s Clover account.
 
 == Privacy Statement ==
 
-[Clover privacy statement can be found here](https://www.clover.com/privacy-policy).
+Clover's privacy statement can be found [here](https://www.clover.com/privacy-policy).
 
 == Feature list ==
 
@@ -39,11 +39,11 @@ using this plug-in will be charged under the merchant’s account at Clover.
 * Charge (Authorize and Capture)
 * Refund
 * Void
-* PCI Compliance through iframe
+* PCI Compliance through iFrames
 * Multi-Lingual Support for Canadian French
-* Payment option with the ‘Pay Now’ Link sent via email
+* Payment option with the ‘Pay Now’ link sent via email
 
-= Prerequisites =
+=== Prerequisites ===
 
 Clover Merchant or Sandbox account
 If you are currently not a Clover merchant or do not have a Clover Sandbox account, you will need to sign up for one at Clover.com
@@ -53,14 +53,16 @@ account(s).
 
 Direct all questions to wordpress@clover.com
 
-[Clover Detail Documentation](https://docs.clover.com/docs/woocommerce)
+[Clover Documentation](https://docs.clover.com/docs/woocommerce)
 
 == Frequently Asked Questions ==
 
-= Do I need a Clover POS device to use this plug in =
+= Do I need a Clover POS device to use this plug in? =
+
 No, all you need is a Clover Sandbox or Clover Production Account.
 
 == Screenshots ==
+
 1. Clover Networks Logo Screen
 2. WordPress Plugin Page with Clover Payments for WooCommerce
 3. Enable Clover Payments in WooCommerce Settings
@@ -75,83 +77,38 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 12. Clover Payment card details on invoice page
 
 == Changelog ==
-= 1.0.12 = Patch Release
-* Tested compatibility with WordPress 6.5
-* Fixed reCAPTCHA issue
 
-= 1.0.11 = Patch Release
-
-* Tested compatibility with WordPress 6.4
-* Added support for reCAPTCHA
-* Customer IP address is now passed in transactions
-
-= 1.0.10 = Patch release
-
-* Tested compatibility with WordPress 6.3
-
-= 1.0.9 = Patch Release
-
-* Logs Cleanup
-
-= 1.0.8 = Patch Release
-
-* Tested compatibility with WordPress 6.2
-
-= 1.0.7 = Patch Release
-
-* Display Customer Information with Orders at Clover Dashboard
-
-= 1.0.6 = Patch Release
-
-* Fixed Token Reuse issue
-
-= 1.0.5 = Patch Release
-
-* Display Error Message Updated
-
-= 1.0.4 = Patch Release
-
-* Added feature to make payment with the ‘Pay Now’ Link sent via email
-
-= 1.0.3 = Patch Release
-
-* Added feature to show payment card details with order details
-
-= 1.0.2 = Patch Release
-
-* Bug Fix for Check out with Multiple Payment option selection
-
-= 1.0.1 = Patch Release
-
-* Added bulk capture failure notifications
-* Added best practices for concurrent rate limiting request handling
-
-= 1.0.0 = Initial Release
-
-* Authorize only
-* Capture
-* Charge (Authorize and Capture)
-* Refund
-* Void
-* PCI Compliance through iframe
-* Multi-Lingual Support for Canadian French
+2024-12-11 - version 2.0.0
+* Add - Support for Checkout Block.
+* New - Payment card form style.
+* Update - Improved support for Canadian French.
+* Update - Language for errors and admin settings.
+* Add - Tax amount sent to Clover as a separate value.
+* Remove - Support for Classic Checkout.
 
 == Installation ==
 
-MINIMUM REQUIREMENTS
+*Minimum Requirements*
 PHP version 7.4 or greater
-WordPress 5.9.3 or greater
-WooCommerce 6.4.1 or greater
+WordPress 6.1 or greater
+WooCommerce 8.0 or greater
 Clover Sandbox or Clover Production Account
 
-Ref. the standard [WordPress plugin installation procedure](https://wordpress.org/support/article/managing-plugins/) for details.
+Refer to the standard [WordPress plugin installation procedure](https://wordpress.org/support/article/managing-plugins/) for details.
 
-Quick Steps to Install "Clover Payments for Woocommerce" Plugin
-1. Install this Plugin > From Wordpress Plugin > search "Clover Payments" or "Clover Payments for Woocommerce"
-2. Go to "Clover Payments for WooCommerce" Plugin > Activate
-2. Go to WooCommerce > Plugin Settings > Payments > "Clover Payments" > Manage > Enable
-3. Set "Clover Payments" Plugin - Environment We provide the option for Merchants and Developers to test their integrations against their sandbox accounts prior,
-   to going live. Select “Production” when you want to send transactions to your production environment
-4. Set "Clover Payments" Plugin - Keys Please visit clover merchant portal to get private and public key
-5. Set "Clover Payments" Plugin - Payment Action and Save Changes
-6. You’re done, the active payment methods should be visible in the checkout of your website
+Quick Start - Steps to Install the Clover Payments for WooCommerce plugin.
+1. Install the Plugin: from the WordPress Plugins page search \"Clover Payments\" or \"Clover Payments for WooCommerce\".
+2. \"Activate\" Clover Payments for WooCommerce from \"Plugins\" > \"Installed Plugins\".
+2. Go to \"WooCommerce\" > \"Settings\" > \"Payments\" > \"Clover Payments\" > \"Manage\" > \"Enable\".
+3. Set Clover Payments plugin environment: we provide the option for Merchants and Developers to test their integrations against their sandbox accounts prior to going live. Select “Production” when you want to send transactions to your production environment.
+4. Set Clover Payments plugin keys: please visit Clover Merchant Portal to obtain a public and private key.
+5. Set Clover Payments plugin \"Payment Action\" and \"Save Changes\"
+6. You’re done! The active payment methods should be visible in the checkout of your website.
+
+== Upgrade Notice ==
+
+= 2.0.0 =
+WARNING: Version 2.0.0 no longer supports Classic Checkout and is only compatible with Checkout Blocks. Verify Checkout 
+Blocks is enabled after installing update: from the WP-Admin Dashboard navigate to \"Pages\" > \"All Pages\" > 
+\"Checkout\", click \"Transform into blocks\", then \"Save\". [Additional information](https://woocommerce.com/document/woocommerce-store-editing/customizing-cart-and-checkout/#replacing-the-cart-and-checkout-shortcodes).
+

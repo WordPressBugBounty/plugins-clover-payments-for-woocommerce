@@ -32,7 +32,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Please enter refund value', 'woo-clv-payments')
+                        __('Please enter refund value.', 'woo-clv-payments')
                     )
                 );
             }
@@ -42,7 +42,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Please select a valid order to refund', 'woo-clv-payments')
+                        __('Please select a valid order to refund.', 'woo-clv-payments')
                     )
                 );
             }
@@ -54,7 +54,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Unable to process partial void transaction', 'woo-clv-payments')
+                        __('Unable to process partial void transaction.', 'woo-clv-payments')
                     )
                 );
             }
@@ -67,11 +67,11 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
             $header        = $this->buildRefundHeader($private_key);
             $response      = $this->call_api_post($refund_url, $header, $refund_data, 'POST');
             $parseresponse = $this->handle_response($refund_data, $response);
-            $log           = array(
-            'request'  => $refund_data,
-            'response' => $response,
-            );
-            $this->log(wp_json_encode($log));
+
+			if ( $this->settings[ "debug" ] === "yes" ) {
+				wc_get_logger()->info( "Refund request.", [ "Request" => $refund_data ] );
+				wc_get_logger()->info( "Refund response.", [ "Response" => $response ] );
+			};
 
             if ($parseresponse['captured'] ) {
                 $refund_message = $parseresponse['message'];

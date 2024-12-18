@@ -8,7 +8,7 @@
 	if (!defined('ABSPATH')) {
 		exit; // Exit if accessed directly.
 	}
-	
+
 	/**
 	 * Helper file.
 	 */
@@ -18,42 +18,42 @@
 		 * @var type sandbox endpoint.
 		 */
 		private $sandboxcharge_url = 'https://scl-sandbox.dev.clover.com/v1/charges';
-		
+
 		/**
 		 * Live charge endpoint.
 		 *
 		 * @var type live endpoint.
 		 */
 		private $livecharge_url = 'https://scl.clover.com/v1/charges';
-		
+
 		/**
 		 * Sandbox refund endpoint.
 		 *
 		 * @var type sandbox refund endpoint.
 		 */
 		private $sandboxrefund_url = 'https://scl-sandbox.dev.clover.com/v1/refunds';
-		
+
 		/**
 		 * Live refund endpoint.
 		 *
 		 * @var type live refund endpoint.
 		 */
 		private $liverefund_url = 'https://scl.clover.com/v1/refunds';
-		
+
 		/**
 		 * Merchant endpoint sandbox.
 		 *
 		 * @var type merchant endpoint sandbox.
 		 */
 		private $surchargeinfo_url = 'https://apisandbox.dev.clover.com/v3/merchants/';
-		
+
 		/**
 		 * Merchant endpoint live.
 		 *
 		 * @var type merchant endpoint live.
 		 */
 		private $livesurchargeinfo_url = 'https://api.clover.com/v3/merchants/';
-		
+
 		/**
 		 * Generate UUID.
 		 *
@@ -61,7 +61,7 @@
 		 * returns uuid4 idempotent key for API call.
 		 * @throws Exception
 		 */
-		
+
 		public function uuidv4()
 		{
 			$data = random_bytes(16);
@@ -69,7 +69,7 @@
 			$data[8] = chr(ord($data[8]) & 0x3f | 0x80);
 			return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 		}
-		
+
 		/**
 		 * add card details to the post meta table.
 		 *
@@ -80,20 +80,20 @@
 		public function add_card_details($order_id, $response)
 		{
 			$api_arr = json_decode($response['result']);
-			
+
 			if (strcasecmp($api_arr->source->brand, 'MC') == 0) {
 				$brand = 'MasterCard';
 			} else {
 				$brand = $api_arr->source->brand;
 			}
-			
+
 			$card_details = $brand . ' ending in ' . $api_arr->source->last4;
-			
+
 			add_post_meta($order_id, '_brand', $api_arr->source->brand);
 			add_post_meta($order_id, '_last4', $api_arr->source->last4);
 			add_post_meta($order_id, '_card_details', $card_details);
 		}
-		
+
 		/**
 		 * Curl method.
 		 *
@@ -105,10 +105,10 @@
 		 */
 		public function call_api_post($url, $header, $data, $method)
 		{
-			
+
 			$max_attempts = 10;
 			$attempts = 0;
-			
+
 			while ($attempts < $max_attempts) {
 				// Make a request to Clover REST API.
 				try {
@@ -142,10 +142,10 @@
 				sleep((2 ** $attempts) + (wp_rand(1, 10) / 10));
 				++$attempts;
 			}
-			
+
 			return $response;
 		}
-		
+
 		/**
 		 * Handle Response for all api calls.
 		 *
@@ -160,18 +160,18 @@
 			$request['ref_num'] = '';
 			$request['message'] = '';
 			$request['error_code'] = null;
-			
+
 			$api_arr = json_decode($response['result']);
 			if (200 === $response['status_code']) {
 				$request['captured'] = 1;
 				$request['TXN_ID'] = $api_arr->id;
 				$request['ref_num'] = isset($api_arr->ref_num) ? $api_arr->ref_num : '';
 				$request['message'] = $api_arr->status;
-				
+
 			} elseif (0 === $response['status_code']) {
 				$request['message'] = $response['result'];
 				$request['error_code'] = 'unexpected';
-				
+
 			} else {
 				if (isset($api_arr->error)) {
 					$request['error_code'] = isset($api_arr->error->code) ? $api_arr->error->code : '';
@@ -184,7 +184,7 @@
 						$request['message'] = isset($api_arr->message) ? $api_arr->message : 'Unauthorized';
 						$request['error_code'] = 'invalid_key';
 					} else {
-						$request['message'] = __('Unable to complete this transaction', 'woo-clv-payments');
+						$request['message'] = __('Unable to complete transaction.', 'woo-clv-payments');
 						$request['error_code'] = 'unexpected';
 					}
 				}
@@ -192,7 +192,7 @@
 			$request['result'] = $response;
 			return $request;
 		}
-		
+
 		/**
 		 * *
 		 *
@@ -209,7 +209,7 @@
 				return isset($amount) ? (int)Round($amount * 100) : '';
 			}
 		}
-		
+
 		/**
 		 * Log information.
 		 *
@@ -218,9 +218,9 @@
 		public function framework_version()
 		{
 			global $wp_version;
-			return 'WP ' . $wp_version . ' | WC ' . WC_VERSION . ' | 1.0.12';
+			return 'WP ' . $wp_version . ' | WC ' . WC_VERSION . ' | Clover ' . WC_CLOVER_PAYMENTS_VERSION;
 		}
-		
+
 		/**
 		 * Testmode check.
 		 *
@@ -234,7 +234,7 @@
 			}
 			return false;
 		}
-		
+
 		/**
 		 * Charge endpoint return.
 		 *
@@ -249,7 +249,7 @@
 				return $this->livecharge_url;
 			}
 		}
-		
+
 		/**
 		 * Refund endpoint return.
 		 *
@@ -264,7 +264,7 @@
 				return $this->liverefund_url;
 			}
 		}
-		
+
 		/**
 		 * Capture endpoint return.
 		 *
@@ -277,7 +277,7 @@
 			$url = $this->get_charge_url($environment) . '/' . $trans_id . '/capture';
 			return $url;
 		}
-		
+
 		/**
 		 * Merchant endpoint return..
 		 *
@@ -293,7 +293,7 @@
 				return $this->livesurchargeinfo_url . $merchantid . '/ecomm_payment_configs';
 			}
 		}
-		
+
 		/**
 		 * Surcharge text.
 		 *
@@ -328,7 +328,7 @@
 			}
 			return $surcharge;
 		}
-		
+
 		/**
 		 * retrieve payment details from post meta data.
 		 *

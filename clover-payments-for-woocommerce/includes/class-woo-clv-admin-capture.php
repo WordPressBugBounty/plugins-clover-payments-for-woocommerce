@@ -114,7 +114,7 @@ class WOO_CLV_ADMIN_CAPTURE {
 			$count = isset( $_REQUEST['processed_count'] ) ? intval( $_REQUEST['processed_count'] ) : 0;
 			if ( $count ) {
 				?>
-						<div id="message" class="updated fade"><p><?php echo esc_html_e( 'Orders captured via Clover', 'woo-clv-payments' ) . '(' . esc_attr( $count ) . ').'; ?></p></div>
+						<div id="message" class="updated fade"><p><?php echo esc_html_e( 'Orders captured via Clover.', 'woo-clv-payments' ) . '(' . esc_attr( $count ) . ').'; ?></p></div>
 				<?php
 
 			}
@@ -122,7 +122,7 @@ class WOO_CLV_ADMIN_CAPTURE {
 						$fcount = isset( $_REQUEST['failed_count'] ) ? intval( $_REQUEST['failed_count'] ) : 0;
 			if ( $fcount ) {
 				?>
-						<div id="message" class="updated fade clv-error" style="border-left-color: #a00;"><p><?php echo esc_html_e( 'Orders failed to capture via Clover', 'woo-clv-payments' ) . '(' . esc_attr( $fcount ) . ').'; ?></p></div>
+						<div id="message" class="updated fade clv-error" style="border-left-color: #a00;"><p><?php echo esc_html_e( 'Transaction could not be processed through Clover.', 'woo-clv-payments' ) . '(' . esc_attr( $fcount ) . ').'; ?></p></div>
 				<?php
 
 			}

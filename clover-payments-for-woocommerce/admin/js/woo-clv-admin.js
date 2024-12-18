@@ -4,27 +4,26 @@
  * @package woo-clover-payments
  */
 
-jQuery( document ).ready(
-	function() {
-		let environment = jQuery( '#woocommerce_clover_payments_environment' ).val();
-		hideshow( environment );
-		jQuery( '#woocommerce_clover_payments_environment' ).on(
-			'change',
-			function() {
-				hideshow( this.value );
-			}
-		);
+jQuery( document ).ready( function () {
+	let environment = jQuery(
+		'#woocommerce_clover_payments_environment'
+	).val();
+	hideshow( environment );
+	jQuery( '#woocommerce_clover_payments_environment' ).on(
+		'change',
+		function () {
+			hideshow( this.value );
+		}
+	);
 
-		$( document ).on(
-			'click',
-			'.clv-wc-payment-gateway-capture',
-			function(e) {
-				alert( 'capture' );
-			}
-		);
-
-	}
-);
+	$( document ).on(
+		'click',
+		'.clv-wc-payment-gateway-capture',
+		function ( e ) {
+			alert( 'capture' );
+		}
+	);
+} );
 
 /**
  * Sandbox or Production fields.
@@ -32,8 +31,8 @@ jQuery( document ).ready(
  * @param {type} environment
  * @returns {undefined}
  */
-function hideshow(environment) {
-	if (environment == 'sandbox') {
+function hideshow( environment ) {
+	if ( environment == 'sandbox' ) {
 		jQuery( '.clvsdfields' ).closest( 'tr' ).show();
 		jQuery( '.clvfields' ).closest( 'tr' ).hide();
 	} else {
