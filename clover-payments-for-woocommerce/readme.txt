@@ -1,10 +1,10 @@
 === Clover Payments for WooCommerce===
 Contributors: cloverecommerce
-Tags: clover, clover payments, credit card, payment request
+Tags: clover, credit card, payment request
 Plugin Name: Clover Payments for WooCommerce
 Plugin URI: https://wordpress.org/plugins/clover-payments-for-woocommerce/
 Description: Accepting payments in WooCommerce using Clover eCommerce.
-Version: 2.0.0
+Version: 2.1.0
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -14,7 +14,7 @@ License: BSD-3-Clause-Clear
 License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
 Text Domain: woo-clv-payments
 Domain Path: /languages
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 
 The Clover Payments plugin enables merchants that use WooCommerce to process online card payments using Clover.
 
@@ -22,11 +22,11 @@ The Clover Payments plugin enables merchants that use WooCommerce to process onl
 
 The WordPress plugin from Clover allows a merchant using a WordPress based app like WooCommerce
 to securely collect card information from buyers and process the payment using their Clover merchant account.
+
 The payment extension uses iframes to collect card information. Card details are the tokenized by directly
-communicating with a Clover’s servers. The payment is processed using this token and the
-card details are never saved on WordPress or the merchant’s servers. Therefore, this plug-in does not contribute
-to the PCI scope of a merchant’s eCommerce site. The plug-in is free for merchants to use and transactions processed
-using this plugin will be charged under the merchant’s Clover account.
+communicating with a Clover’s servers. The payment is processed using this token and the card details are never saved on WordPress or the merchant’s servers. Therefore, this plug-in does not contribute to the PCI scope of a merchant’s eCommerce site. 
+
+The plug-in is free for merchants to use and transactions processed using this plugin will be charged under the merchant’s Clover account.
 
 == Privacy Statement ==
 
@@ -45,10 +45,9 @@ Clover's privacy statement can be found [here](https://www.clover.com/privacy-po
 
 === Prerequisites ===
 
-Clover Merchant or Sandbox account
-If you are currently not a Clover merchant or do not have a Clover Sandbox account, you will need to sign up for one at Clover.com
-prior to using the Payment extension. You can then use this extension to send transactions to your Sandbox or Production accounts.
-We recommend that you test your plugin integration with your Clover sandbox account prior to sending transactions to your production/live
+* Clover Merchant or Sandbox account
+* If you are currently not a Clover merchant or do not have a Clover Sandbox account, you will need to sign up for one at Clover.com prior to using the Payment extension. You can then use this extension to send transactions to your Sandbox or Production accounts.
+* We recommend that you test your plugin integration with your Clover sandbox account prior to sending transactions to your production/live
 account(s).
 
 Direct all questions to wordpress@clover.com
@@ -78,17 +77,12 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 
 == Changelog ==
 
-2024-12-11 - version 2.0.0
-* Add - Support for Checkout Block.
-* New - Payment card form style.
-* Update - Improved support for Canadian French.
-* Update - Language for errors and admin settings.
-* Add - Tax amount sent to Clover as a separate value.
-* Remove - Support for Classic Checkout.
+2025-01-13 - version 2.1.0
+* Added - Support for shortcode (classic) Checkout 
 
 == Installation ==
 
-*Minimum Requirements*
+**MINIMUM REQUIREMENTS**
 PHP version 7.4 or greater
 WordPress 6.1 or greater
 WooCommerce 8.0 or greater
@@ -96,19 +90,12 @@ Clover Sandbox or Clover Production Account
 
 Refer to the standard [WordPress plugin installation procedure](https://wordpress.org/support/article/managing-plugins/) for details.
 
-Quick Start - Steps to Install the Clover Payments for WooCommerce plugin.
-1. Install the Plugin: from the WordPress Plugins page search \"Clover Payments\" or \"Clover Payments for WooCommerce\".
-2. \"Activate\" Clover Payments for WooCommerce from \"Plugins\" > \"Installed Plugins\".
-2. Go to \"WooCommerce\" > \"Settings\" > \"Payments\" > \"Clover Payments\" > \"Manage\" > \"Enable\".
-3. Set Clover Payments plugin environment: we provide the option for Merchants and Developers to test their integrations against their sandbox accounts prior to going live. Select “Production” when you want to send transactions to your production environment.
-4. Set Clover Payments plugin keys: please visit Clover Merchant Portal to obtain a public and private key.
-5. Set Clover Payments plugin \"Payment Action\" and \"Save Changes\"
-6. You’re done! The active payment methods should be visible in the checkout of your website.
-
-== Upgrade Notice ==
-
-= 2.0.0 =
-WARNING: Version 2.0.0 no longer supports Classic Checkout and is only compatible with Checkout Blocks. Verify Checkout 
-Blocks is enabled after installing update: from the WP-Admin Dashboard navigate to \"Pages\" > \"All Pages\" > 
-\"Checkout\", click \"Transform into blocks\", then \"Save\". [Additional information](https://woocommerce.com/document/woocommerce-store-editing/customizing-cart-and-checkout/#replacing-the-cart-and-checkout-shortcodes).
-
+**QUICK START**
+Steps to Install the Clover Payments for WooCommerce plugin.
+1. Install the Plugin from the WordPress Plugins page search **Clover Payments** or **Clover Payments for WooCommerce**.
+2. **Activate** Clover Payments for WooCommerce from **Plugins** > **Installed Plugins**.
+3. Go to **WooCommerce** > **Settings** > **Payments** > **Clover Payments** > **Manage** > **Enable**.
+4. Set Clover Payments plugin environment: we provide the option for Merchants and Developers to test their integrations against their sandbox accounts prior to going live. Select **Production** when you want to send transactions to your production environment.
+5. Set Clover Payments plugin keys: please visit Clover Merchant Portal to obtain a public and private key.
+6. Set Clover Payments plugin **Payment Action** and **Save Changes**
+7. You’re done! The active payment methods should be visible in the checkout of your website.

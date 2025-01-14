@@ -57,6 +57,10 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 			wc_get_logger()->error( 'Page is not using SSL.' );
 			return false;
 		}
+
+		//If the Checkout page contains a Checkout Block, return true; else return false.
+		//Replace with return true if shortcode form is ever removed.
+		//return WC_Blocks_Utils::has_block_in_page( wc_get_page_id( 'checkout' ), 'woocommerce/checkout' );
 		return true;
 	}
 

@@ -17,6 +17,8 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 
 	use ApiHelper;
 
+	public $id;
+
 	public string $environment;
 	public bool $testmode;
 	public string $private_key;
@@ -30,6 +32,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 */
 	public function __construct() {
 		$this->id = 'clover_payments';
+		$this->has_fields = true;
 		$this->method_title = __('Clover Payments', 'woo-clv-payments');
 		$this->method_description = __('Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business.', 'woo-clv-payments');
 		$this->supports = array(
@@ -59,6 +62,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 
 		// We need custom JavaScript to obtain a token.
 		add_action('admin_enqueue_scripts', array($this, 'clover_admin_scripts'));
+		add_action('wp_enqueue_scripts', array($this, 'payment_scripts'));
 		add_action('woocommerce_order_item_add_action_buttons', array($this, 'add_capture_button'));
 		//This action hook  lets us modify content of after order details for Admin
 		add_action('woocommerce_admin_order_data_after_order_details', array($this, 'wc_clv_payment_card_info_on_order_details'), 10, 1);
@@ -219,6 +223,84 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	}
 
 	/**
+	 * Display checkout form.
+	 */
+	public function payment_fields()
+	{
+		ob_start();
+		$this->elements_form();
+		ob_end_flush();
+	}
+
+	/**
+	 * Build checkout form.
+	 */
+	public function elements_form()
+	{
+		?>
+		<fieldset id="wc-<?php echo esc_attr($this->id); ?>-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">
+            <span id="clover-ssl-message" style=" font-size: 12px;color: red;">
+            <?php
+				if (!$this->testmode && !is_ssl()) {
+					esc_html_e('Enable SSL to continue payment in production mode', 'woo-clv-payments');
+					return;
+				}
+			?>
+                    </span>
+			<span id="clover-surcharge-details">
+            <?php
+				$surcharge = $this->getSurcharge($this->testmode);
+				$message = $surcharge['message'];
+				if ($surcharge['supported'] && isset($message)) {
+					echo esc_html($message);
+				}
+			?>
+                    </span>
+			<div id="gap_form"><input type="hidden" name="PostVar"/>
+				<form action="/charge" method="post" class="clover-gateway" id="payment-form">
+
+					<div class="form-row top-row">
+						<div id="card-number" class="field card-number"></div>
+						<div class="input-errors" id="card-number-errors" role="alert"></div>
+					</div>
+
+					<div class="form-row">
+						<div class="form-row clv-midfield">
+							<div id="card-date" class="field third-width"></div>
+							<div class="input-errors" id="card-date-errors" role="alert"></div>
+						</div>
+
+						<div class="form-row clv-midfield">
+							<div id="card-cvv" class="field third-width"></div>
+							<div class="input-errors" id="card-cvv-errors" role="alert"></div>
+						</div>
+					</div>
+
+					<div class="form-row">
+						<div id="card-postal-code" class="field third-width"></div>
+						<div class="input-errors" id="card-postal-code-errors" role="alert"></div>
+					</div>
+
+					<div id="card-errors" role="alert"></div>
+					<div id="card-response" role="alert"></div>
+				</form>
+			</div>
+
+			<div class="control">
+				<input type="hidden" id="cloverToken" name="clover_token" class="input" data-bind="value:cloverToken">
+				<?php $clover_token_once = wp_create_nonce('clover-token-nonce'); ?>
+				<input type="hidden" id="cloverTokenNonce" name="clover_token_nonce" class="input" value="<?php echo esc_attr($clover_token_once); ?>">
+				<input type="hidden" id="transresult" name="transaction_result" class="input" data-bind="value:transactionResult">
+			</div>
+
+			<br/>
+
+			<div class="clear"></div>
+		</fieldset>
+		<?php
+	}
+
+	/**
 	 * *
 	 *
 	 * @param  type $test_mode Testmode.
@@ -230,6 +312,85 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		$response = $this->call_api_post($surcharge_url, array(), array(), 'GET');
 		$parse = $this->parse_surcharge($response);
 		return $parse;
+	}
+
+	/**
+	 * Load frontend scripts.
+	 *
+	 * @return type
+	 */
+	public function payment_scripts() {
+		if ( $this->enabled === 'no' ) {
+			wc_get_logger()->error( 'Clover Payments is not enabled.' );
+			return;
+		}
+		if ( empty( $this->merchant ) ) {
+			wc_get_logger()->error( 'Merchant ID is not set.' );
+			return;
+		}
+		if ( empty( $this->publishable_key ) ) {
+			wc_get_logger()->error( 'Public Key is not set.' );
+			return;
+		}
+		if ( empty( $this->private_key) ) {
+			wc_get_logger()->error( 'Private Key is not set.' );
+			return;
+		}
+		if ( ! $this->testmode && ! is_ssl() ) {
+			wc_get_logger()->error( 'Page is not using SSL.' );
+			return;
+		}
+
+		//If the Checkout page contains a Checkout Block, return;
+		if ( WC_Blocks_Utils::has_block_in_page( wc_get_page_id( 'checkout' ), 'woocommerce/checkout' ) ) {
+			return;
+		}
+
+		if (!$this->testmode) {
+			wp_enqueue_script(
+				'clover_js',
+				'https://checkout.clover.com/sdk.js',
+				array(),
+				'1.0.0',
+				true
+			);
+		} else {
+			wp_enqueue_script(
+				'clover_js',
+				'https://checkout.sandbox.dev.clover.com/sdk.js',
+				array(),
+				'1.0.0',
+				true
+			);
+		}
+
+		wp_register_style(
+			'custom_styles',
+			plugins_url('../public/css/woo-clv-custom.css', __FILE__),
+			array(),
+			'1.0.0'
+		);
+
+		wp_register_script(
+			'custom_scripts',
+			plugins_url('../public/js/woo-clv-custom.js',__FILE__),
+			array('jquery', 'clover_js'),
+			'1.0.0',
+			false
+		);
+
+		wp_localize_script(
+			'custom_scripts',
+			'clover_params',
+			array(
+				'publishableKey' => $this->publishable_key,
+				'locale' => get_locale(),
+				'merchant' => $this->merchant,
+			)
+		);
+
+		wp_enqueue_script('custom_scripts');
+		wp_enqueue_style('custom_styles');
 	}
 
 	/**
