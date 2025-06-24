@@ -1,11 +1,11 @@
-# Copyright (C) 2024 Clover eCommerce
-# This file is distributed under the BSD 3-Clause Clear License.
+# Copyright (C) 2025 Clover eCommerce
+# This file is distributed under the BSD-3-Clause-Clear.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover Payments for WooCommerce 2.1.0\n"
+"Project-Id-Version: Clover Payments for WooCommerce 2.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/clover-payments-for-woocommerce\n"
-"POT-Creation-Date: 2024-11-26T20:58:39+00:00\n"
-"PO-Revision-Date: 2024-11-26T20:58:39+00:00\n"
+"POT-Creation-Date: 2025-01-29T19:14:44+00:00\n"
+"PO-Revision-Date: 2025-01-30T19:17:39+00:00\n"
 "Last-Translator: Clover\n"
 "Language-Team: Clover\n"
 "Language: Canadian French\n"
@@ -41,7 +41,7 @@ msgid "https://www.clover.com"
 msgstr ""
 
 #: includes/class-woo-clv-admin-capture.php:55
-#: includes/class-woo-clv-admin.php:392
+#: includes/class-woo-clv-admin.php:625
 msgid "Capture Charge"
 msgstr "Frais de capture"
 
@@ -53,144 +53,153 @@ msgstr "Commandes capturées via Clover."
 msgid "Transaction could not be processed through Clover."
 msgstr "La transaction n'a pas pu être traitée par Clover."
 
-#: includes/class-woo-clv-admin.php:33
+#: includes/class-woo-clv-admin.php:36
 msgid "Clover Payments"
 msgstr "Clover Paiements"
 
-#: includes/class-woo-clv-admin.php:34
+#: includes/class-woo-clv-admin.php:37
 msgid "Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business."
 msgstr "Clover simplifie la vie des petites entreprises grâce à des systèmes de paiement et de gestion d'entreprise sur-mesure (et tout-en-un) qui peuvent être mis en œuvre rapidement et s'adapter à la croissance de l'entreprise."
 
-#: includes/class-woo-clv-admin.php:140
+#: includes/class-woo-clv-admin.php:147
 msgid "Enabled"
 msgstr "Activés"
 
-#: includes/class-woo-clv-admin.php:143
-#: includes/class-woo-clv-admin.php:213
+#: includes/class-woo-clv-admin.php:150 includes/class-woo-clv-admin.php:220
 msgid "Yes"
 msgstr "Oui"
 
-#: includes/class-woo-clv-admin.php:144
-#: includes/class-woo-clv-admin.php:214
+#: includes/class-woo-clv-admin.php:151 includes/class-woo-clv-admin.php:221
 msgid "No"
 msgstr "Non"
 
-#: includes/class-woo-clv-admin.php:146
+#: includes/class-woo-clv-admin.php:153
 msgid "Clover Payments is available in the United States and Canada. Please select \"Yes\" to enable in checkout."
 msgstr "Les paiements Clover sont disponibles aux États-Unis et au Canada. Veuillez sélectionner «Oui» pour les activer à l’étape du paiement"
 
-#: includes/class-woo-clv-admin.php:151
+#: includes/class-woo-clv-admin.php:158
 msgid "Title"
 msgstr "Titre"
 
-#: includes/class-woo-clv-admin.php:153
+#: includes/class-woo-clv-admin.php:160
 msgid "Appears as the title of the payment form on the checkout page."
 msgstr "Apparaît comme le titre du formulaire de paiement sur la page de paiement."
 
-#: includes/class-woo-clv-admin.php:154
+#: includes/class-woo-clv-admin.php:161
 msgid "Credit/Debit Card"
 msgstr "Carte de crédit/débit"
 
-#: includes/class-woo-clv-admin.php:157
+#: includes/class-woo-clv-admin.php:164
 msgid "Environment"
 msgstr "Environnement"
 
-#: includes/class-woo-clv-admin.php:159
+#: includes/class-woo-clv-admin.php:166
 msgid "We provide Merchants and Developers the option to test their integrations against their Clover Sandbox accounts before going live. Select “Production” to send transactions to your live Clover account."
 msgstr "Nous offrons aux commerçants et développeurs l'option de tester leurs intégrations dans leur compte test avant le lancement. Sélectionnez «Production» lorsque vous souhaitez envoyer les transactions à votre environnement de production."
 
-#: includes/class-woo-clv-admin.php:162
+#: includes/class-woo-clv-admin.php:169
 msgid "Sandbox"
 msgstr "Compte test"
 
-#: includes/class-woo-clv-admin.php:163
+#: includes/class-woo-clv-admin.php:170
 msgid "Production"
 msgstr "Production"
 
-#: includes/class-woo-clv-admin.php:167
+#: includes/class-woo-clv-admin.php:174
 msgid "Sandbox Merchant ID"
 msgstr "ID du compte test du commerçant"
 
-#: includes/class-woo-clv-admin.php:172
+#: includes/class-woo-clv-admin.php:179
 msgid "Sandbox Public Key"
 msgstr "Clé publique du compte test"
 
-#: includes/class-woo-clv-admin.php:174
+#: includes/class-woo-clv-admin.php:181
 msgid "Please visit <a href=\"https://sandbox.dev.clover.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Clover Developer Portal</a> to obtain a Public Sandbox API Key."
 msgstr "Veuillez visiter le <a href='https://sandbox.dev.clover.com/' target='_blank' rel='noopener noreferrer'>Portail des Développeurs Clover</a> pour obtenir la clé publique du compte test."
 
-#: includes/class-woo-clv-admin.php:178
+#: includes/class-woo-clv-admin.php:185
 msgid "Sandbox Private Key"
 msgstr "Clé privée du compte test"
 
-#: includes/class-woo-clv-admin.php:180
+#: includes/class-woo-clv-admin.php:187
 msgid "Please visit <a href=\"https://sandbox.dev.clover.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Clover Developer Portal</a> to obtain a Private Sandbox API Key."
 msgstr "Veuillez visiter le <a href='https://sandbox.dev.clover.com/' target='_blank' rel='noopener noreferrer'>Portail des Développeurs Clover</a> pour obtenir la clé privée du compte test."
 
-#: includes/class-woo-clv-admin.php:184
+#: includes/class-woo-clv-admin.php:191
 msgid "Merchant ID"
 msgstr "ID du commerçant"
 
-#: includes/class-woo-clv-admin.php:189
+#: includes/class-woo-clv-admin.php:196
 msgid "Public Key"
 msgstr "Clé publique"
 
-#: includes/class-woo-clv-admin.php:191
+#: includes/class-woo-clv-admin.php:198
 msgid "Please visit <a href=\"https://clover.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Clover Merchant Portal</a> to obtain a Public API Key."
 msgstr "Veuillez visiter le <a href='https://clover.com/' target='_blank' rel='noopener noreferrer'>Portail des Commerçants Clover</a> pour obtenir la clé publique."
 
-#: includes/class-woo-clv-admin.php:195
+#: includes/class-woo-clv-admin.php:202
 msgid "Private Key"
 msgstr "Clé privée"
 
-#: includes/class-woo-clv-admin.php:197
+#: includes/class-woo-clv-admin.php:204
 msgid "Please visit <a href=\"https://clover.com/\" target=\"_blank\" rel=\"noopener noreferrer\">Clover Merchant Portal</a> to obtain a Private API Key."
 msgstr "Veuillez visiter le <a href='https://clover.com/' target='_blank' rel='noopener noreferrer'>Portail des Commerçants Clover</a> pour obtenir la clé privée."
 
-#: includes/class-woo-clv-admin.php:201
+#: includes/class-woo-clv-admin.php:208
 msgid "Payment Action"
 msgstr "Action au niveau du paiement"
 
-#: includes/class-woo-clv-admin.php:205
+#: includes/class-woo-clv-admin.php:212
 msgid "Authorize and Capture"
 msgstr "Autoriser et saisir"
 
-#: includes/class-woo-clv-admin.php:206
+#: includes/class-woo-clv-admin.php:213
 msgid "Authorize"
 msgstr "Autoriser"
 
-#: includes/class-woo-clv-admin.php:210
+#: includes/class-woo-clv-admin.php:217
 msgid "Debug"
 msgstr "Déboguer"
 
-#: includes/class-woo-clv-admin.php:266
+#: includes/class-woo-clv-admin.php:265
+msgid "Merchant ID is invalid."
+msgstr "L’ID du commerçant est invalide."
+
+#: includes/class-woo-clv-admin.php:288
+msgid "Sandbox Merchant ID is invalid."
+msgstr "L'ID du compte test du commerçant est invalide."
+
+#: includes/class-woo-clv-admin.php:316
+msgid "Enable SSL to continue payment in production mode"
+msgstr "Activer SSL pour continuer le paiement en mode production"
+
+#: includes/class-woo-clv-admin.php:498
 #: includes/class-woo-clv-errormapper.php:48
 msgid "Transaction could not be processed. Please try again."
 msgstr "Impossible de traiter la transaction. Veuillez réessayer."
 
-#: includes/class-woo-clv-admin.php:294
+#: includes/class-woo-clv-admin.php:526
 msgid "Awaiting offline payment."
 msgstr "En attente de paiement hors ligne."
 
-#: includes/class-woo-clv-admin.php:320
-#: includes/class-woo-clv-admin.php:469
+#: includes/class-woo-clv-admin.php:552 includes/class-woo-clv-admin.php:702
 msgid "An error has occurred; please try again."
 msgstr "Une erreur s’est produite : veuillez réessayer."
 
-#: includes/class-woo-clv-admin.php:407
+#: includes/class-woo-clv-admin.php:640
 msgid "Please select the correct order."
 msgstr "Veuillez sélectionner la bonne commande."
 
-#: includes/class-woo-clv-admin.php:415
+#: includes/class-woo-clv-admin.php:648
 msgid "Unable to capture canceled, refunded, or failed orders."
 msgstr "Impossible de capturer pour les commandes annulées, remboursées ou échouées."
 
-#: includes/class-woo-clv-admin.php:423
+#: includes/class-woo-clv-admin.php:656
 msgid "Already captured: unable to process again."
 msgstr "Déjà capturé : Impossible de traiter à nouveau."
 
 #. translators: %1$s %2$s %3$s: amount txid message
-#: includes/class-woo-clv-admin.php:447
+#: includes/class-woo-clv-admin.php:680
 msgid "Captured %1$s - Capture ID: %2$s - Status: %3$s"
 msgstr "%1$s capturé - ID de capture : %2$s - État : %3$s"
 
@@ -305,7 +314,7 @@ msgstr "Annulé %1$s - ID Annulé: %2$s - Statut: %3$s"
 msgid "Unable to complete transaction."
 msgstr "Impossible d'effectuer la transaction."
 
-#: woo-clover-payments.php:43
+#: woo-clover-payments.php:42
 msgid "WooCommerce Clover Payment Gateway: We require WooCommerce to be installed and active. You can download it here"
 msgstr "Passerelle de paiement Clover pour WooCommerce : WooCommerce doit être installé et actif. Vous pouvez le télécharger ici"
 

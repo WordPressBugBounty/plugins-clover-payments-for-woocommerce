@@ -3,7 +3,7 @@
  * Plugin Name: Clover Payments for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/clover-payments-for-woocommerce/
  * Description: Accepting payments in WooCommerce using Clover eCommerce.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Requires Plugins: woocommerce
  * Requires at least: 6.1
  * Requires PHP: 7.4
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'WC_CLOVER_PAYMENTS_VERSION', '2.1.0' );
+define( 'WC_CLOVER_PAYMENTS_VERSION', '2.2.0' );
 
 //Actions Hooks
 add_action( 'plugins_loaded', 'woo_clv_init_gateway' );

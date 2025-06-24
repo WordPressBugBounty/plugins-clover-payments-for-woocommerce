@@ -88,8 +88,23 @@
 }
 
 .j6Em0vXirA5QJqQjtqEg {
-	margin-right: 8px;
-	font-weight: 600;
-	font-family: Graphik, Helvetica, sans-serif;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	/*Commented out to use inherited fonts checkout for more uniform checkout page styling.*/
+	/*font-weight: 400;*/
+	/*font-family: Graphik, Helvetica, sans-serif;*/
+}
+
+/*@media screen and (min-width: 461px) {*/
+/*	.label {*/
+
+/*	}*/
+/*}*/
+
+.WsSo3PNjuStQm2aw_7Y3 {
+	height: 24px;
+	vertical-align: -5px;
+	margin-left: 8px;
 }
 

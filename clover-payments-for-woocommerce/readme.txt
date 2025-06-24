@@ -4,7 +4,7 @@ Tags: clover, credit card, payment request
 Plugin Name: Clover Payments for WooCommerce
 Plugin URI: https://wordpress.org/plugins/clover-payments-for-woocommerce/
 Description: Accepting payments in WooCommerce using Clover eCommerce.
-Version: 2.1.0
+Version: 2.2.0
 Requires at least: 6.1
 Tested up to: 6.7
 Requires PHP: 7.4
@@ -14,7 +14,7 @@ License: BSD-3-Clause-Clear
 License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
 Text Domain: woo-clv-payments
 Domain Path: /languages
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 
 The Clover Payments plugin enables merchants that use WooCommerce to process online card payments using Clover.
 
@@ -77,8 +77,11 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 
 == Changelog ==
 
-2025-01-13 - version 2.1.0
-* Added - Support for shortcode (classic) Checkout 
+2025-06-23 - Version 2.2.0
+
+* Added - "Cardholder Name" field to payment form
+* Added - Accepted card networks icons
+* Added - Admin settings "Merchant ID" validation
 
 == Installation ==
 

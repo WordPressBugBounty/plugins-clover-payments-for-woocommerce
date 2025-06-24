@@ -57,6 +57,9 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		$this->ischarge = ('charge' === $this->get_option('payment_action'));
 		$this->update_option('capture', ('charge' === $this->get_option('payment_action')) ? 'yes' : 'no');
 
+		// Calls sanitize_settings() to sanitize merchant entered plugin admin settings.
+		add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'sanitize_settings' ) );
+
 		// This action hook saves the settings.
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
@@ -220,6 +223,77 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 				'default' => 'yes',
 			),
 		);
+	}
+
+
+	/**
+	 * Sanitizes plugin admin settings.
+	 *
+	 * Currently, this method capitalizes any lower case letter that was entered for the Production and Sandbox Merchant
+	 * IDs. Can be expanded to modify other settings if need be.
+	 *
+	 * @since  2.2.0
+	 * @param  array $settings Array of admin settings values.
+	 * @return array Modified admin settings array.
+	 */
+	public function sanitize_settings( array $settings ): array {
+		if ( isset( $settings['merchant_id'] ) ) {
+			$settings['merchant_id'] = trim( strtoupper( $settings['merchant_id'] ) );
+		}
+		if ( isset( $settings['test_merchant_id'] ) ) {
+			$settings['test_merchant_id'] = trim( strtoupper( $settings['test_merchant_id'] ) );
+		}
+		return $settings;
+	}
+
+	/**
+	 * Validates Merchant ID.
+	 *
+	 * Takes the merchant entered Production Merchant ID and checks if it meets the following criteria: it is exactly 13
+	 * characters, and only contains numbers and letters. If either condition is not met, and the currently selected
+	 * environment is "Production", an error message is logged and displayed on the admin settings page after "Save changes"
+	 * is clicked.
+	 *
+	 * @since  2.2.0
+	 * @param  string $key merchant_id in admin settings array.
+	 * @param  string $value value of merchant_id in admin settings array.
+	 * @return string
+	 */
+	public function validate_merchant_id_field( string $key, string $value ): string {
+		$is_production = $_POST[ $this->plugin_id . $this->id . '_environment' ] === 'production';
+
+		if ( ! preg_match('/^(|[A-Za-z0-9]{13})$/', $value ) && $is_production ) {
+			WC_Admin_Settings::add_error( esc_html__( 'Merchant ID is invalid.', 'woo-clv-payments' ) );
+			wc_get_logger()->error( 'Merchant ID is invalid.', array(
+				'merchant_id' => $value
+			) );
+    	}
+    	return $value;
+	}
+
+	/**
+	 * Validates Sandbox Merchant ID.
+	 *
+	 * Takes the merchant entered Sandbox Merchant ID and checks if it meets the following criteria: it is exactly 13
+	 * characters, and only contains numbers and letters. If either condition is not met, and the currently selected
+	 * environment is "Sandbox", an error message is logged and displayed on the admin settings page after "Save changes"
+	 * is clicked.
+	 *
+	 * @since  2.2.0
+	 * @param  string $key merchant_id in admin settings array.
+	 * @param  string $value value of merchant_id in admin settings array.
+	 * @return string
+	 */
+	public function validate_test_merchant_id_field( string $key, string $value ): string {
+		$is_sandbox = $_POST[ $this->plugin_id . $this->id . '_environment' ] === 'sandbox';
+
+		if ( ! preg_match('/^(|[A-Za-z0-9]{13})$/', $value ) && $is_sandbox ) {
+			WC_Admin_Settings::add_error( esc_html__( 'Sandbox Merchant ID is invalid.', 'woo-clv-payments' ) );
+			wc_get_logger()->error( 'Sandbox Merchant ID is invalid.', array(
+				'sandbox_merchant_id' => $value
+			) );
+		}
+		return $value;
 	}
 
 	/**
@@ -500,13 +574,14 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		$tax = $order->get_total_tax();
 		$charge_data = array(
 			'amount' => $this->converttocents($amount, $currency),
-			'currency' => $currency,
+			'currency' => strtolower( $currency ),
 			'source' => $token,
 			'capture' => $this->ischarge,
 			'description' => $this->ischarge ? 'Authorize and Capture' : 'Authorize',
 			'metadata' => array('shopping_cart' => $this->framework_version()),
 			'customer' => $customer_data,
-			'tax_amount' => $this->converttocents($tax, $currency)
+			'tax_amount' => $this->converttocents($tax, $currency),
+			'skip_default_convenience_fee' => true
 		);
 		return $charge_data;
 	}

@@ -120,7 +120,7 @@
 							'timeout' => 60,
 							'sslverify' => false,
 							'headers' => $header,
-							'body' => !empty($data) ? wp_json_encode($data) : null,
+							'body' => empty($data) ? null : wp_json_encode( $data ),
 						)
 					);
 					if (is_wp_error($result)) {
