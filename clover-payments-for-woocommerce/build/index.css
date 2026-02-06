@@ -1,4 +1,10 @@
-.agpQQ94cth8DeVkW1wxp {
+.hLVhsN2kjvWR98KCbxsI {
+	background: transparent;
+	margin: 0 0.25em 0.25em 0.25em;
+}
+
+.BaUxrSDBW6ZeNqqV3ymf {
+	display: inline-block;
 	margin-top: 0.25rem;
 	font-size: 0.875rem;
 	font-weight: 400;
@@ -7,104 +13,126 @@
 	height: 20px;
 }
 
-.miwW2RjrD2wQhYcY9_wg {
+.kpBsNCGg6U3xDv_pAaX6 {
 	margin: 0;
 	height: 100%;
 }
 
-.ilWHDvMquqb_X8LUTY_E {
+.VUyZqYKQ_poJjNMztn2B {
 	vertical-align: -4.75px;
 	margin-right: 0.2rem;
 	fill: #e70000;
 }
 
-@media screen and (max-width: 460px) {
+:root {
+	--field-margin: 16px;
+	--element-height: 48px;
+	--corner-radius: 8px;
+	--margin-between-fields: 8px;
+}
 
-	.pC9ok0y1jzgcjG_7r0VW {
-		margin-bottom: 24px;
+iframe {
+	border-radius: var( --corner-radius );
+}
+
+@media screen and ( max-width: 460px ) {
+	.oGT5mz7UHn0f8YHehsvX {
+		margin-bottom: var( --field-margin );
 	}
 }
 
-@media screen and (min-width: 461px) {
-
-	.BTbKwKVhuYtryF4wuuEj {
+@media screen and ( min-width: 461px ) {
+	.NBcGWCrF2aJJbDJVaTHA {
 		display: flex;
 	}
 
-	.pC9ok0y1jzgcjG_7r0VW {
+	.oGT5mz7UHn0f8YHehsvX {
 		flex-grow: 1;
-		margin-right: 12px;
+		margin-right: var( --margin-between-fields );
 	}
 
-	.qDcjvnznQ_6cXi3ZNdIQ {
+	.yiwWd1MwMskoFYlthyhD {
 		flex-grow: 1;
-		margin-left: 12px;
+		margin-left: var( --margin-between-fields );
 	}
 
-	.H5OrQl_9_mgEXwhqKeZU {
+	.Nn_OX1kqmL84kvjKhpbv {
 		display: flex;
-		margin-top: 24px;
 	}
 
-	.Ropw3_GmEQ2QYAsiXnXy {
-		margin-right: 12px;
+	.Laty6uK69U71mwYLMmpc {
+		margin-right: var( --margin-between-fields );
 	}
 
-	.bpAmv2uEFrrekjaht95v {
+	.oASHCxKh30L1XG6v1OgQ {
 		width: 50%;
 	}
 }
 
-.u6QuLRhpfuXlvKzc2vCi,
-.BTbKwKVhuYtryF4wuuEj {
-	margin-bottom: 24px;
+.D8AkDHVNkF5j92eXLJeG,
+.NBcGWCrF2aJJbDJVaTHA {
+	margin-bottom: var( --field-margin );
 }
 
-.xgIOYaOZMHnhZnHho3qT {
-	height: 46px;
+.vWA4o_JgP_XuYK6Hw9Yf {
+	height: var( --element-height );
 	border: 1px solid #727272;
-	border-radius: 8px;
+	border-radius: var( --corner-radius );
 }
 
-.cced4Wcl8Utq3l7r_dsC {
-	height: 46px;
+.Wfm4s3Av83PSoAXrNqgG {
+	height: var( --element-height );
 	border: 1px solid #e70000;
-	border-radius: 8px;
+	border-radius: var(	--corner-radius );
 }
 
-.uXaSVn_4TmtLBFuKnUYg,
-.xgIOYaOZMHnhZnHho3qT:hover,
-.cced4Wcl8Utq3l7r_dsC:hover {
-	height: 46px;
+/* Commented out because hover made styling a bit visually messy. */
+/* .inputDefault:hover, */
+/* .inputError:hover, */
+.gBfGdjkh1LX43iKTaivw {
+	height: var( --element-height );
 	border: 1px solid #228800;
-	border-radius: 8px;
+	border-radius: var( --corner-radius );
 	box-shadow: 0px 0px 3px 0px #228800;
 }
 
-.RAGzBSYy0cv5Y6vF4NCX {
-	margin-right: 8px;
+.cPF8f2QMwPcB7ajfWRWr {
+	box-sizing: border-box;
+	height: 48px;
 	margin-bottom: 16px;
-	margin-left: 8px;
 }
 
-.j6Em0vXirA5QJqQjtqEg {
+.DJXCuKMZj4AhutZdQwGC {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	height: 28px;
+	padding: 4px 2px;
+	margin: 16px 0;
+}
+
+.hPUG05O67zzhE7BaNQoQ {
+	flex-grow: 1;
+	height: 1px;
+	background-color: #C7C7C7;
+}
+
+.ByyZ_WM1LYxUdJhgE5sL {
+	padding: 0 13px;
+	color: #5A5A5A;
+	line-height: 20px;
+	font-size: 14px;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.gBPqMKsI2QcRGSipLBry {
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
 	/*Commented out to use inherited fonts checkout for more uniform checkout page styling.*/
 	/*font-weight: 400;*/
 	/*font-family: Graphik, Helvetica, sans-serif;*/
-}
-
-/*@media screen and (min-width: 461px) {*/
-/*	.label {*/
-
-/*	}*/
-/*}*/
-
-.WsSo3PNjuStQm2aw_7Y3 {
-	height: 24px;
-	vertical-align: -5px;
-	margin-right: 8px;
 }
 

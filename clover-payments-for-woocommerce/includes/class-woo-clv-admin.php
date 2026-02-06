@@ -15,47 +15,54 @@ if (!defined('ABSPATH')) {
  */
 class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 
-	use ApiHelper;
-
-	public $id;
-
 	public string $environment;
-	public bool $testmode;
+
+	public bool $test_mode;
+
 	public string $private_key;
+
 	public string $publishable_key;
+
 	public string $merchant;
-	public bool $debugmode;
+
+	public bool $logging;
+
 	public bool $ischarge;
+
+	private string $error_icon = '';
 
 	/**
 	 *  Constructor
 	 */
 	public function __construct() {
 		$this->id = 'clover_payments';
+		$this->icon = WC_CLOVER_PAYMENTS_PLUGIN_URL . '/assets/images/clover-logo-quatrefoil.svg';
 		$this->has_fields = true;
 		$this->method_title = __('Clover Payments', 'woo-clv-payments');
-		$this->method_description = __('Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business.', 'woo-clv-payments');
+		$this->method_description = __( 'Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business.', 'woo-clv-payments' );
 		$this->supports = array(
 			'products',
-			'refunds',
-			'tokenization',
-			'add_payment_method',
+			'refunds'
 		);
+		$this->countries = array( 'US', 'CA' );
 
 		$this->init_form_fields();
 
 		// Load the settings.
 		$this->init_settings();
-		$this->title = $this->get_option('title');
-		$this->enabled = $this->get_option('enabled');
-		$this->environment = $this->get_option('environment');
-		$this->testmode = ('sandbox' === $this->get_option('environment'));
-		$this->private_key = $this->testmode ? $this->get_option('test_private_key') : $this->get_option('private_key');
-		$this->publishable_key = $this->testmode ? $this->get_option('test_publishable_key') : $this->get_option('publishable_key');
-		$this->merchant = $this->testmode ? $this->get_option('test_merchant_id') : $this->get_option('merchant_id');
-		$this->debugmode = ('yes' === $this->get_option('debug'));
-		$this->ischarge = ('charge' === $this->get_option('payment_action'));
+		$this->title       = $this->get_option(WC_Clover_Settings_Keys::TITLE );
+		$this->enabled     = $this->get_option(WC_Clover_Settings_Keys::ENABLED );
+		$this->environment = $this->get_option(WC_Clover_Settings_Keys::ENVIRONMENT );
+		$this->test_mode  = WC_Clover_Environments::SANDBOX === $this->environment;
+		$this->private_key = $this->test_mode ? $this->get_option('test_private_key') : $this->get_option('private_key');
+		$this->publishable_key  = $this->test_mode ? $this->get_option('test_publishable_key') : $this->get_option('publishable_key');
+		$this->merchant    = $this->test_mode ? $this->get_option('test_merchant_id') : $this->get_option('merchant_id');
+		$this->logging     = ('yes' === $this->get_option('debug'));
+		$this->ischarge    = ('charge' === $this->get_option('payment_action'));
+
 		$this->update_option('capture', ('charge' === $this->get_option('payment_action')) ? 'yes' : 'no');
+
+		WC_Clover_Logger::set_is_logging_enabled( $this->logging );
 
 		// Calls sanitize_settings() to sanitize merchant entered plugin admin settings.
 		add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'sanitize_settings' ) );
@@ -73,6 +80,8 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		// This filter hook lets us modify content of order details table to add card brand and last4 digits
 		// other option add action hook to add card details outside order details table
 		add_filter('woocommerce_get_order_item_totals', array($this, 'add_card_details_to_account_order'), 10, 3);
+		add_filter( 'woocommerce_gateway_icon', array( $this, 'hide_icon_on_classic_checkout' ), 10, 2 );
+
 	}
 
 	/**
@@ -85,7 +94,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		if (isset($card_details) && !empty($card_details)) {
 			$total_rows['card_details'] = array(
 				'label' => __('Card details:', 'woocommerce'),
-				'value' => esc_html($card_details)
+				'value' => esc_html($card_details),
 			);
 
 			// 1. saving the values of items totals to be reordered
@@ -122,107 +131,90 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		}
 	}
 
+	/**
+	 * Adds card details to the order's metadata.
+	 *
+	 * This method adds the card brand and last 4 digits of the card number to the order's metadata.
+	 * If the card brand is 'MC', it is converted to 'MasterCard'.
+	 *
+	 * @param int   $order_id The ID of the order.
+	 * @param array $response  The response data containing card details.
+	 * @return void
+	 */
+	public function add_card_details( $order_id, $response ): void {
+		if ( strcasecmp( $response['data']->source->brand, 'MC' ) == 0 ) {
+			$brand = 'MasterCard';
+		} else {
+			$brand = $response['data']->source->brand;
+		}
+
+		$card_details = $brand . ' ending in ' . $response['data']->source->last4;
+
+		add_post_meta( $order_id, '_brand', $response['data']->source->brand );
+		add_post_meta( $order_id, '_last4', $response['data']->source->last4 );
+		add_post_meta( $order_id, '_card_details', $card_details );
+	}
 
 	/**
-	 * Load scripts at admin.
+	 * Retrieves card details from the order's metadata.
+	 *
+	 * This method retrieves the card details (brand and last 4 digits) from the order's metadata.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return string The card details.
 	 */
-	public function clover_admin_scripts() {
-		if (is_admin()) {
-			wp_enqueue_script(
-				'admin_js',
-				plugins_url('../admin/js/woo-clv-admin.js', __FILE__),
-				null,
-				'1.0.0',
-				true
-			);
-		}
+	public function get_card_details($order): string {
+		return get_post_meta($order->get_id(), '_card_details', true);
+	}
+
+	/**
+	 * Register and enqueue admin-specific scripts.
+	 *
+	 * This function registers the main admin JavaScript file, localizes
+	 * translatable strings for use within the script, and then enqueues it
+	 * on WordPress admin pages. The script version is set to the current time
+	 * to prevent caching during development.
+	 *
+	 * @return void
+	 */
+	public function clover_admin_scripts(): void {
+		wp_register_script(
+			'clover_admin_js',
+			plugins_url( '/admin/js/woo-clv-admin.js', WC_CLOVER_PAYMENTS_MAIN_FILE ),
+			array( 'jquery' ),
+			date('h:i:s'),
+			true
+		);
+
+		wp_localize_script(
+			'clover_admin_js',
+			'cloverAdminVars',
+			array(
+				'textRequired'  => __( 'Required', 'woo-clv-payments' ),
+				'textLearnMore' => wp_sprintf(
+				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag */
+				__( '%1$sLearn more%2$s about the integration.', 'woo-clv-payments' ),
+					'<a href="https://docs.clover.com/dev/docs/woocommerce" target="_blank" rel="noopener noreferrer">',
+					'</a>'
+				)
+			),
+		);
+
+		wp_enqueue_script( 'clover_admin_js' );
 	}
 
 	/**
 	 * Configuration fields.
 	 */
-	public function init_form_fields() {
-		$this->form_fields = array(
-			'enabled' => array(
-				'title' => __('Enabled', 'woo-clv-payments'),
-				'type' => 'select',
-				'options' => array(
-					'yes' => __('Yes', 'woo-clv-payments'),
-					'no' => __('No', 'woo-clv-payments'),
-				),
-				'description' => __('Clover Payments is available in the United States and Canada. Please select "Yes" to enable in checkout.', 'woo-clv-payments'),
-				'default' => 'no',
-				'js_trigger' => true,
-			),
-			'title' => array(
-				'title' => __('Title', 'woo-clv-payments'),
-				'type' => 'text',
-				'description' => __('Appears as the title of the payment form on the checkout page.', 'woo-clv-payments'),
-				'default' => __( 'Credit/Debit Card', 'woo-clv-payments' )
-			),
-			'environment' => array(
-				'title' => __('Environment', 'woo-clv-payments'),
-				'type' => 'select',
-				'description' => __('We provide Merchants and Developers the option to test their integrations against their Clover Sandbox accounts before going live. Select “Production” to send transactions to your live Clover account.', 'woo-clv-payments'),
-				'default' => 'sandbox',
-				'options' => array(
-					'sandbox' => __('Sandbox', 'woo-clv-payments'),
-					'production' => __('Production', 'woo-clv-payments'),
-				),
-			),
-			'test_merchant_id' => array(
-				'title' => __('Sandbox Merchant ID', 'woo-clv-payments'),
-				'type' => 'text',
-				'class' => 'clvsdfields',
-			),
-			'test_publishable_key' => array(
-				'title' => __('Sandbox Public Key', 'woo-clv-payments'),
-				'type' => 'text',
-				'description' => __('Please visit <a href="https://sandbox.dev.clover.com/" target="_blank" rel="noopener noreferrer">Clover Developer Portal</a> to obtain a Public Sandbox API Key.', 'woo-clv-payments'),
-				'class' => 'clvsdfields',
-			),
-			'test_private_key' => array(
-				'title' => __('Sandbox Private Key', 'woo-clv-payments'),
-				'type' => 'password',
-				'description' => __('Please visit <a href="https://sandbox.dev.clover.com/" target="_blank" rel="noopener noreferrer">Clover Developer Portal</a> to obtain a Private Sandbox API Key.', 'woo-clv-payments'),
-				'class' => 'clvsdfields',
-			),
-			'merchant_id' => array(
-				'title' => __('Merchant ID', 'woo-clv-payments'),
-				'type' => 'text',
-				'class' => 'clvfields',
-			),
-			'publishable_key' => array(
-				'title' => __('Public Key', 'woo-clv-payments'),
-				'type' => 'text',
-				'description' => __('Please visit <a href="https://clover.com/" target="_blank" rel="noopener noreferrer">Clover Merchant Portal</a> to obtain a Public API Key.', 'woo-clv-payments'),
-				'class' => 'clvfields',
-			),
-			'private_key' => array(
-				'title' => __('Private Key', 'woo-clv-payments'),
-				'type' => 'password',
-				'description' => __('Please visit <a href="https://clover.com/" target="_blank" rel="noopener noreferrer">Clover Merchant Portal</a> to obtain a Private API Key.', 'woo-clv-payments'),
-				'class' => 'clvfields',
-			),
-			'payment_action' => array(
-				'title' => __('Payment Action', 'woo-clv-payments'),
-				'type' => 'select',
-				'default' => 'charge',
-				'options' => array(
-					'charge' => __('Authorize and Capture', 'woo-clv-payments'),
-					'authorize' => __('Authorize', 'woo-clv-payments'),
-				),
-			),
-			'debug' => array(
-				'title' => __('Debug', 'woo-clv-payments'),
-				'type' => 'select',
-				'options' => array(
-					'yes' => __('Yes', 'woo-clv-payments'),
-					'no' => __('No', 'woo-clv-payments'),
-				),
-				'default' => 'yes',
-			),
-		);
+	public function init_form_fields(): void {
+		/**
+		 * Initializes the form fields for the Clover payment gateway.
+		 *
+		 * Supplies an empty array to be modified for creating the admin settings page.
+		 *
+		 * @since 2.2.0
+		 */
+		$this->form_fields = apply_filters( 'wc_clover_form_fields', array() );
 	}
 
 
@@ -246,132 +238,160 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		return $settings;
 	}
 
+
 	/**
-	 * Validates Merchant ID.
+	 * Validates the Merchant ID field.
 	 *
-	 * Takes the merchant entered Production Merchant ID and checks if it meets the following criteria: it is exactly 13
-	 * characters, and only contains numbers and letters. If either condition is not met, and the currently selected
-	 * environment is "Production", an error message is logged and displayed on the admin settings page after "Save changes"
-	 * is clicked.
+	 * This method checks the validity of the Production Merchant ID. If the Merchant ID is invalid or missing,
+	 * an error message is displayed in the admin settings and logged for debugging purposes.
 	 *
-	 * @since  2.2.0
-	 * @param  string $key merchant_id in admin settings array.
-	 * @param  string $value value of merchant_id in admin settings array.
-	 * @return string
+	 * @since 2.2.0
+	 *
+	 * @param string $key   The key of the Merchant ID field in the settings array.
+	 * @param string $value The value of the Merchant ID entered by the admin.
+	 * @return string The validated Merchant ID or an empty string if validation fails.
 	 */
 	public function validate_merchant_id_field( string $key, string $value ): string {
-		$is_production = $_POST[ $this->plugin_id . $this->id . '_environment' ] === 'production';
+		$environment_key = $this->plugin_id . $this->id . '_environment';
+		$is_production   = isset( $_POST[ $environment_key ] ) && 'production' === $_POST[ $environment_key ];
 
-		if ( ! preg_match('/^(|[A-Za-z0-9]{13})$/', $value ) && $is_production ) {
-			WC_Admin_Settings::add_error( esc_html__( 'Merchant ID is invalid.', 'woo-clv-payments' ) );
-			wc_get_logger()->error( 'Merchant ID is invalid.', array(
-				'merchant_id' => $value
-			) );
-    	}
-    	return $value;
+		if ( ! $is_production ) {
+			return $value;
+		}
+
+		if ( empty( $value ) ) {
+			$message = __( 'Merchant ID is missing.', 'woo-clv-payments' );
+			$log_msg = 'Empty Merchant ID was submitted.';
+		} else if ( preg_match('/^[A-HJKMNP-TV-Z0-9]{13}$/i', $value ) ) {
+			return $value;
+    	} else {
+			$message = __( 'Merchant ID is invalid.', 'woo-clv-payments' );
+			$log_msg = 'Invalid Merchant ID was submitted.';
+		}
+
+		WC_Clover_Helper::add_error( $message );
+		WC_Clover_Logger::error( $log_msg, array( 'merchant_id' => $value ) );
+
+		return '';
 	}
 
 	/**
-	 * Validates Sandbox Merchant ID.
+	 * Validates the Sandbox Merchant ID field.
 	 *
-	 * Takes the merchant entered Sandbox Merchant ID and checks if it meets the following criteria: it is exactly 13
-	 * characters, and only contains numbers and letters. If either condition is not met, and the currently selected
-	 * environment is "Sandbox", an error message is logged and displayed on the admin settings page after "Save changes"
-	 * is clicked.
+	 * This method checks the validity of the Sandbox Merchant ID. If the Sandbox Merchant ID is invalid or missing,
+	 * an error message is displayed in the admin settings and logged for debugging purposes.
 	 *
-	 * @since  2.2.0
-	 * @param  string $key merchant_id in admin settings array.
-	 * @param  string $value value of merchant_id in admin settings array.
-	 * @return string
+	 * @since 2.2.0
+	 *
+	 * @param string $key   The key of the Sandbox Merchant ID field in the settings array.
+	 * @param string $value The value of the Sandbox Merchant ID entered by the admin.
+	 * @return string The validated Sandbox Merchant ID or an empty string if validation fails.
 	 */
 	public function validate_test_merchant_id_field( string $key, string $value ): string {
-		$is_sandbox = $_POST[ $this->plugin_id . $this->id . '_environment' ] === 'sandbox';
+		$environment_key = $this->plugin_id . $this->id . '_environment';
+		$test_mode	     = isset( $_POST[ $environment_key ] ) && 'sandbox' === $_POST[ $environment_key ];
 
-		if ( ! preg_match('/^(|[A-Za-z0-9]{13})$/', $value ) && $is_sandbox ) {
-			WC_Admin_Settings::add_error( esc_html__( 'Sandbox Merchant ID is invalid.', 'woo-clv-payments' ) );
-			wc_get_logger()->error( 'Sandbox Merchant ID is invalid.', array(
-				'sandbox_merchant_id' => $value
-			) );
+		if ( ! $test_mode ) {
+			return $value;
 		}
-		return $value;
+
+		if ( empty( $value ) ) {
+			$message = __( 'Sandbox Merchant ID is missing.', 'woo-clv-payments' );
+			$log_msg = 'Empty Sandbox Merchant ID was submitted.';
+		} else if ( preg_match('/^[A-HJKMNP-TV-Z0-9]{13}$/i', $value ) ) {
+			return $value;
+		} else {
+			$message = __( 'Sandbox Merchant ID is invalid.', 'woo-clv-payments' );
+			$log_msg = 'Invalid Sandbox Merchant ID was submitted.';
+		}
+
+		WC_Clover_Helper::add_error( $message );
+		WC_Clover_Logger::error( $log_msg, array( 'sandbox_merchant_id' => $value ) );
+
+		return '';
 	}
 
 	/**
-	 * Display checkout form.
+	 * Outputs the HTML for the custom card form fields on the checkout page.
+	 *
+	 * @since 1.0.0
+	 * @see WC_Payment_Gateway::payment_fields()
 	 */
-	public function payment_fields()
-	{
-		ob_start();
-		$this->elements_form();
-		ob_end_flush();
-	}
-
-	/**
-	 * Build checkout form.
-	 */
-	public function elements_form()
-	{
+	public function payment_fields() {
+		$this->load_error_icon();
 		?>
-		<fieldset id="wc-<?php echo esc_attr($this->id); ?>-cc-form" class="wc-credit-card-form wc-payment-form" style="background:transparent;">
-            <span id="clover-ssl-message" style=" font-size: 12px;color: red;">
-            <?php
-				if (!$this->testmode && !is_ssl()) {
-					esc_html_e('Enable SSL to continue payment in production mode', 'woo-clv-payments');
-					return;
-				}
-			?>
-                    </span>
-			<span id="clover-surcharge-details">
-            <?php
-				$surcharge = $this->getSurcharge($this->testmode);
-				$message = $surcharge['message'];
-				if ($surcharge['supported'] && isset($message)) {
-					echo esc_html($message);
-				}
-			?>
-                    </span>
-			<div id="gap_form"><input type="hidden" name="PostVar"/>
-				<form action="/charge" method="post" class="clover-gateway" id="payment-form">
+		<fieldset id="wc-<?php echo esc_attr( $this->id ); ?>-cc-form" >
 
-					<div class="form-row top-row">
-						<div id="card-number" class="field card-number"></div>
-						<div class="input-errors" id="card-number-errors" role="alert"></div>
+			<div id="clover-errors" role="alert"></div>
+
+			<div id="card-elements-container">
+
+				<div class="card-row-top">
+					<div id="card-name" class="field"></div>
+					<?php $this->render_error_container( 'card-name-errors' ); ?>
+				</div>
+
+				<div class="card-row-top">
+					<div id="card-number" class="field"></div>
+					<?php $this->render_error_container( 'card-number-errors' ); ?>
+				</div>
+
+				<div class="card-row-center">
+					<div class="date-container">
+						<div id="card-date" class="field"></div>
+						<?php $this->render_error_container( 'card-date-errors' ); ?>
 					</div>
+					<div class="cvv-container">
+						<div id="card-cvv" class="field"></div>
+						<?php $this->render_error_container( 'card-cvv-errors' ); ?>
+					</div>
+				</div>
 
-					<div class="form-row">
-						<div class="form-row clv-midfield">
-							<div id="card-date" class="field third-width"></div>
-							<div class="input-errors" id="card-date-errors" role="alert"></div>
-						</div>
-
-						<div class="form-row clv-midfield">
-							<div id="card-cvv" class="field third-width"></div>
-							<div class="input-errors" id="card-cvv-errors" role="alert"></div>
+				<div class="card-row-bottom">
+					<div class="width-container">
+						<div class="margin-container">
+							<div id="card-postal-code" class="field"></div>
+							<?php $this->render_error_container( 'card-postal-code-errors' ); ?>
 						</div>
 					</div>
+				</div>
 
-					<div class="form-row">
-						<div id="card-postal-code" class="field third-width"></div>
-						<div class="input-errors" id="card-postal-code-errors" role="alert"></div>
-					</div>
-
-					<div id="card-errors" role="alert"></div>
-					<div id="card-response" role="alert"></div>
-				</form>
 			</div>
-
-			<div class="control">
-				<input type="hidden" id="cloverToken" name="clover_token" class="input" data-bind="value:cloverToken">
-				<?php $clover_token_once = wp_create_nonce('clover-token-nonce'); ?>
-				<input type="hidden" id="cloverTokenNonce" name="clover_token_nonce" class="input" value="<?php echo esc_attr($clover_token_once); ?>">
-				<input type="hidden" id="transresult" name="transaction_result" class="input" data-bind="value:transactionResult">
-			</div>
-
-			<br/>
-
-			<div class="clear"></div>
 		</fieldset>
 		<?php
+	}
+
+	/**
+	 * Renders the HTML structure for a field's validation error message.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @param string $id The unique HTML ID to assign to the error paragraph element.
+	 */
+	private function render_error_container( string $id ) {
+		?>
+		<div class="input-errors" role="alert">
+			<p id="<?php echo esc_attr( $id ); ?>" class="validation-error">
+				<?php echo $this->error_icon; ?>
+				<span class="error-text" ></span>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Loads the SVG error icon from the file system and caches it in a class property.
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 * @return void
+	 */
+	private function load_error_icon(): void {
+		$icon_path = WC_CLOVER_PAYMENTS_PLUGIN_PATH . '/assets/icons/error-icon.svg';
+		if ( file_exists( $icon_path ) ) {
+			$this->error_icon = file_get_contents( $icon_path );
+		}
 	}
 
 	/**
@@ -380,12 +400,37 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 * @param  type $test_mode Testmode.
 	 * @return type
 	 */
-	private function getSurcharge($test_mode) {
-		$merchantid = $this->merchant;
-		$surcharge_url = $this->get_surcharge_url($merchantid, $test_mode);
-		$response = $this->call_api_post($surcharge_url, array(), array(), 'GET');
-		$parse = $this->parse_surcharge($response);
-		return $parse;
+	private function getSurcharge(): array {
+		$response = WC_Clover_API::get_payment_configs();
+		return $this->parse_surcharge( $response );
+	}
+
+	private function parse_surcharge( array $response ): array {
+		$surcharge = array();
+
+		if ( $response['status_code'] === 200 ) { // 200 indicates success api response
+			$surcharge['message'] = '';
+
+			if ( isset( $response['data']->surcharging ) ) {
+				$surcharging 			= $response['data']->surcharging;
+				$surcharge['supported'] = $response['data']->surcharging->supported;
+
+				if ( $surcharge['supported'] && isset( $surcharging->rate ) ) {
+					$rate = ( $response['data']->surcharging->rate * 100 );
+					$surcharge['message'] = 'Note: A surcharge of ' . $rate
+					. '% may be applied to credit cards transactions';
+				}
+			}
+		} elseif ( $response['status_code'] === 0 ) { // 0 indicates internal error
+			$surcharge['message'] = 'Unable to display surcharge information at this moment ';
+
+		} elseif ( $response['status_code'] === 401 ) {
+			$surcharge['message'] = 'Merchant ID is invalid, so we are not able to display surcharge information';
+
+		} else {
+			$surcharge['message'] = 'Unable to display surcharge information at this moment';
+		}
+		return $surcharge;
 	}
 
 	/**
@@ -393,73 +438,44 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 *
 	 * @return type
 	 */
-	public function payment_scripts() {
-		if ( $this->enabled === 'no' ) {
-			wc_get_logger()->error( 'Clover Payments is not enabled.' );
-			return;
-		}
-		if ( empty( $this->merchant ) ) {
-			wc_get_logger()->error( 'Merchant ID is not set.' );
-			return;
-		}
-		if ( empty( $this->publishable_key ) ) {
-			wc_get_logger()->error( 'Public Key is not set.' );
-			return;
-		}
-		if ( empty( $this->private_key) ) {
-			wc_get_logger()->error( 'Private Key is not set.' );
-			return;
-		}
-		if ( ! $this->testmode && ! is_ssl() ) {
-			wc_get_logger()->error( 'Page is not using SSL.' );
+	public function payment_scripts(): void {
+		if ( ! is_checkout() ) {
 			return;
 		}
 
-		//If the Checkout page contains a Checkout Block, return;
-		if ( WC_Blocks_Utils::has_block_in_page( wc_get_page_id( 'checkout' ), 'woocommerce/checkout' ) ) {
-			return;
-		}
-
-		if (!$this->testmode) {
-			wp_enqueue_script(
-				'clover_js',
-				'https://checkout.clover.com/sdk.js',
-				array(),
-				'1.0.0',
-				true
-			);
-		} else {
-			wp_enqueue_script(
-				'clover_js',
-				'https://checkout.sandbox.dev.clover.com/sdk.js',
-				array(),
-				'1.0.0',
-				true
-			);
-		}
+		$sdk_url = $this->test_mode ? 'https://checkout.sandbox.dev.clover.com/sdk.js' : 'https://checkout.clover.com/sdk.js';
+		wp_register_script(
+			'clover',
+			$sdk_url,
+			array(),
+			WC_CLOVER_PAYMENTS_VERSION,
+			true
+		);
 
 		wp_register_style(
 			'custom_styles',
 			plugins_url('../public/css/woo-clv-custom.css', __FILE__),
 			array(),
-			'1.0.0'
+			WC_CLOVER_PAYMENTS_VERSION
 		);
 
 		wp_register_script(
 			'custom_scripts',
 			plugins_url('../public/js/woo-clv-custom.js',__FILE__),
-			array('jquery', 'clover_js'),
-			'1.0.0',
-			false
+			array( 'jquery', 'clover' ),
+			WC_CLOVER_PAYMENTS_VERSION,
+			true
 		);
 
 		wp_localize_script(
 			'custom_scripts',
-			'clover_params',
+			'wc_clover_params',
 			array(
-				'publishableKey' => $this->publishable_key,
-				'locale' => get_locale(),
-				'merchant' => $this->merchant,
+				'publishableKey'    => $this->publishable_key,
+				'locale'            => WC_Clover_Helper::get_clover_compatible_locale(),
+				'merchant'          => $this->merchant,
+				'checkoutNonce'     => wp_create_nonce( 'clover_process_checkout' ),
+				'localizedMessages' => WOO_CLV_ERRORMAPPER::get_localized_messages()
 			)
 		);
 
@@ -474,59 +490,47 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 * @return array
 	 * @global type $woocommerce Woocommerce.
 	 */
-	public function process_payment($order_id) {
+	public function process_payment( $order_id ) {
 		try {
 			global $woocommerce;
-			$order = new WC_Order($order_id);
-			$success_link = $this->get_return_url($order);
-			$environment = $this->environment;
-			$charge_url = $this->get_charge_url($environment);
-			$private_key = $this->private_key;
-			$uuid = $this->uuidv4();
-			$ip_address = $this->get_ip_address();
-			$header = $this->buildHeader($private_key, $uuid, $ip_address);
+			$order = wc_get_order( $order_id );
+			$success_link = $this->get_return_url( $order );
 
 			// get clover token value, if empty notify's user that transaction could not be processed and
 			// at admin's end shows the woocommerce order has been failed
-			$clovertokennonce = $this->get_token();
-			if( empty( trim( $clovertokennonce['clovertoken'] ) ) ) {
+			$clover_token = $this->get_token();
+			if( empty( $clover_token ) ) {
 				// log the information
-				if ( $this->debugmode ) {
-					wc_get_logger()->warning( "Transaction could not be processed: Clover Token does not exist." );
-				};
+				WC_Clover_Logger::warning( 'Transaction could not be processed: Clover Token does not exist.' );
 
-				$order->update_status('failed');
+				$order->update_status( 'failed' );
+				$failure_message = __( 'Transaction could not be processed. Please try again.', 'woo-clv-payments' );
+				wc_add_notice( $failure_message, 'error' );
 				return array(
-					'result' => 'failed',
-					'message' => __("Transaction could not be processed. Please try again.", 'woo-clv-payments'),
+					'result' => 'failure',
+					'message' => $failure_message,
 					'error_code' => 'Unexpected',
 				);
-
-			}
-			// continue if token has been created and retrieved successfully
-			$charge_data = $this->getChargeData($order,$clovertokennonce['clovertoken']);
-			$response = $this->call_api_post($charge_url, $header, $charge_data, 'POST');
-			$parseresponse = $this->handle_response($charge_data, $response);
-
-			$charge_data['customer']['first_name'] = "-REDACTED-";
-			$charge_data['customer']['last_name'] = "-REDACTED-";
-
-			if ( $this->debugmode ) {
-				wc_get_logger()->info( "Charge Request.", [ "Request" => $charge_data ] );
-				wc_get_logger()->info( "Charge Response.", [ "Response" => $response ] );
 			}
 
-			if ($parseresponse['captured']) {
+			$response = WC_Clover_API::create_charge( $order, $this->ischarge, $clover_token);
+
+			$processed_response = $this->handle_payments_response( $response );
+
+			if ( $processed_response['message'] === 'succeeded' ) {
 				$woocommerce->cart->empty_cart();
 
-				// adding card details( card brand and last4 to order's meta data in post meta table
-				$this->add_card_details($order_id, $response);
+				// adding card details( card brand and last4 to order's metadata in post meta table
+				$this->add_card_details( $order_id, $response );
 
-				if ($this->ischarge) {
-					$order->payment_complete($parseresponse['TXN_ID']);
+				if ( $this->ischarge ) {
+					$order->payment_complete( $processed_response['TXN_ID'] );
 				} else {
-					$order->set_transaction_id($parseresponse['TXN_ID']);
-					$order->update_status('on-hold', __('Awaiting offline payment.', 'woo-clv-payments'));
+					$order->set_transaction_id( $processed_response['TXN_ID'] );
+					$order->update_status(
+						'on-hold',
+						__( 'Awaiting offline payment.', 'woo-clv-payments' )
+					);
 				}
 
 				return array(
@@ -535,73 +539,28 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 				);
 			} else {
 
-				$failure_message = WOO_CLV_ERRORMAPPER::get_localized_error_message($parseresponse);
+				$failure_message = WOO_CLV_ERRORMAPPER::get_localized_error_message( $processed_response );
 				$order->update_status('failed');
-				//wc_add_notice($failure_message, 'error');
+				wc_add_notice( $failure_message, 'error' );
 				return array(
-					'result' => 'failed',
+					'result' => 'failure',
 					'message' => $failure_message,
-					'error_code' => $parseresponse['error_code'],
+					'error_code' => $processed_response['error_code'],
 				);
 			}
 
 		} catch (Exception $e) {
 
 			$order->update_status('failed');
-			//wc_add_notice(__('An error has occurred, please try again', 'woo-clv-payments'), 'error');
+			$failure_message = __('An error has occurred, please try again', 'woo-clv-payments');
+			wc_add_notice( $failure_message, 'error');
 			return array(
-				'result' => 'failed',
+				'result' => 'failure',
 				'exceptionMessage' => $e->getMessage(),
-				'message' => __('An error has occurred; please try again.', 'woo-clv-payments'),
+				'message' => $failure_message,
 				'error_code' => 'Unexpected',
 			);
 		}
-	}
-
-	/**
-	 * Build charge data.    *
-	 *
-	 * @param  type $order Order id.
-	 * @return type
-	 */
-	private function getChargeData($order,$token) {
-		// get the ID of the order
-		$order_id = $order->get_id();
-		// get Customer Data for the order
-		$customer_data = $this->get_customer_data($order_id);
-		$currency = $order->get_currency();
-		$amount = $order->get_total();
-		$tax = $order->get_total_tax();
-		$charge_data = array(
-			'amount' => $this->converttocents($amount, $currency),
-			'currency' => strtolower( $currency ),
-			'source' => $token,
-			'capture' => $this->ischarge,
-			'description' => $this->ischarge ? 'Authorize and Capture' : 'Authorize',
-			'metadata' => array('shopping_cart' => $this->framework_version()),
-			'customer' => $customer_data,
-			'tax_amount' => $this->converttocents($tax, $currency),
-			'skip_default_convenience_fee' => true
-		);
-		return $charge_data;
-	}
-
-	/**
-	 * Build Header.
-	 *
-	 * @param  type $private_key For validation.
-	 * @param  type $uuid        Unique Field.
-	 * @return type
-	 */
-	private function buildHeader($private_key, $uuid, $ip) {
-		$header = array(
-			'Content-Type' => 'application/json',
-			'Accept' => 'application/json',
-			'authorization' => 'Bearer ' . $private_key,
-			'Idempotency-key' => $uuid,
-			'x-forwarded-for' => $ip
-		);
-		return $header;
 	}
 
 	/**
@@ -610,7 +569,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 * @param  type $order Order id.
 	 * @return type
 	 */
-	public function add_capture_button($order) {
+	public function add_capture_button( $order ) {
 		if (!($order->payment_method === $this->id)) {
 			return;
 		}
@@ -636,8 +595,8 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	 * @param  type $bulk_capture Optional.
 	 * @return type
 	 */
-	public function process_capture($order, $bulk_capture = false) {
-		if (!($order->payment_method === $this->id)) {
+	public function process_capture( $order, $bulk_capture = false ) {
+		if ( ! ( $order->payment_method === $this->id ) ) {
 			return array(
 				'success' => false,
 				'message' => __('Please select the correct order.', 'woo-clv-payments'),
@@ -645,7 +604,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 				'processed' => false,
 			);
 		}
-		if (in_array($order->get_status(), array('cancelled', 'refunded', 'failed'), true)) {
+		if ( in_array( $order->get_status(), array( 'cancelled', 'refunded', 'failed' ), true ) ) {
 			return array(
 				'success' => false,
 				'message' => __('Unable to capture canceled, refunded, or failed orders.', 'woo-clv-payments'),
@@ -653,7 +612,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 				'processed' => false,
 			);
 		}
-		if ($order->get_date_paid()) {
+		if ( $order->get_date_paid() ) {
 			return array(
 				'success' => false,
 				'message' => __('Already captured: unable to process again.', 'woo-clv-payments'),
@@ -662,47 +621,51 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 			);
 		}
 		try {
-			$private_key = $this->private_key;
-			$charge_id = $order->get_transaction_id();
-			$environment = $this->environment;
-			$amount = $order->get_total();
-			$header = $this->buildRefundHeader($private_key);
-			$capture_url = $this->get_capture_url($environment, $charge_id);
-			$capture_data = $this->getCaptureData($order);
-			$response = $this->call_api_post($capture_url, $header, $capture_data, 'POST');
-			$parseresponse = $this->handle_response($capture_data, $response);
+			$response = WC_Clover_API::capture_charge( $order );
 
-			if ( $this->debugmode ) {
-				wc_get_logger()->info( "Capture Request.", [ "Request" => $capture_data ] );
-				wc_get_logger()->info( "Capture Response.", [ "Response" => $response ] );
-			};
+			WC_Clover_Logger::info( 'Capture response.', array(
+				'Response' => $response
+			) );
 
-			if ($parseresponse['captured']) {
-				$message = $parseresponse['message'];
-				/* translators: %1$s %2$s %3$s: amount txid message */
-				$message = sprintf(__('Captured %1$s - Capture ID: %2$s - Status: %3$s', 'woo-clv-payments'), $amount, $parseresponse['TXN_ID'], $message);
-				$order->update_meta_data('_clover_capture_id', $parseresponse['TXN_ID']);
-				$order->add_order_note($message);
-				$order->payment_complete($parseresponse['TXN_ID']);
+			$processed_response = $this->handle_payments_response( $response );
+
+			if ( $processed_response['message'] === 'succeeded' ) {
+				$amount = $order->get_total();
+				$message = $processed_response['message'];
+
+				$message = wp_sprintf(
+				/* translators: %1$s: amount, %2$s: capture ID, %3$s: status */
+				__('Captured %1$s - Capture ID: %2$s - Status: %3$s', 'woo-clv-payments'),
+					$amount, $processed_response['TXN_ID'], $message
+				);
+
+				$order->update_meta_data( '_clover_capture_id', $processed_response['TXN_ID'] );
+				$order->add_order_note( $message );
+				$order->payment_complete( $processed_response['TXN_ID'] );
+
 				return array(
 					'success' => true,
 					'code' => 200,
 					'message' => $message,
 					'processed' => true,
 				);
+
 			} else {
-				$failure_message = WOO_CLV_ERRORMAPPER::get_localized_error_message($parseresponse);
+				$failure_message = WOO_CLV_ERRORMAPPER::get_localized_error_message( $processed_response );
 
 				return array(
 					'success' => false,
 					'message' => $failure_message,
-					'code' => $parseresponse['error_code'],
+					'code' => $processed_response['error_code'],
 					'processed' => true,
 				);
 			}
 		} catch (Exception $e) {
 			$order->update_status('failed');
-			wc_add_notice(__('An error has occurred; please try again.', 'woo-clv-payments'), 'error');
+			wc_add_notice(
+				esc_html__('An error has occurred; please try again.', 'woo-clv-payments'),
+				'error'
+			);
 			return array(
 				'success' => false,
 				'message' => $e->getMessage(),
@@ -713,64 +676,56 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 	}
 
 	/**
-	 * Build data.
-	 *
-	 * @param  type $order Order id.
-	 * @return type
-	 */
-	private function getCaptureData($order) {
-		$currency = $order->get_currency();
-		$amount = $order->get_total();
-		$charge_data = array(
-			'amount' => $this->converttocents($amount, $currency),
-			'description' => 'capture_charge',
-			'metadata' => array('shopping_cart' => $this->framework_version()),
-		);
-		return $charge_data;
-	}
-
-	/**
-	 * returns a customer object to be passed along with charge data retrieving information using user's order id.
-	 * @return type
-	 */
-	private function get_customer_data($order_id) {
-
-		$customer_data = array();
-		$order = new WC_Order($order_id);
-		// Get the user ID from an Order ID
-		$user_id = get_post_meta( $order_id, '_customer_user', true );
-		$user = get_userdata( $user_id );
-		if($user){
-
-			// Get an instance of the WC_Customer Object from the user ID
-			$customer = new WC_Customer( $user_id );
-			$customer_data['first_name']   = $customer->get_first_name();
-			$customer_data['last_name']    = $customer->get_last_name();
-			$customer_data['phone'] = $customer->get_billing_phone();
-
-		}
-		else
-		{
-			$customer_data['first_name']   = $order->get_billing_first_name();
-			$customer_data['last_name']    = $order->get_billing_last_name();
-			$customer_data['phone']    = $order->get_billing_phone();
-
-		}
-		$customer_data['email']   = $order->get_billing_email();
-
-		return $customer_data;
-	}
-
-	/**
 	 * checks for clover token value and returns the token to be used in getchargedata call.
-	 * @return type
+	 *
+	 * @return string
 	 */
-	private function get_token() {
-		$clover_token_nonce[ 'clovertoken' ] = sanitize_text_field( wp_unslash( $_POST[ 'clover_token' ] ) );
-		return $clover_token_nonce;
+	private function get_token(): string {
+		$clover_token = '';
+		if ( WC_Clover_Helper::verify_checkout_nonce() ) {
+			$clover_token = sanitize_text_field( $_POST['clover_token'] );
+		}
+		return $clover_token;
 	}
 
-	public function get_ip_address() {
-		return WC_Geolocation::get_ip_address();
+	public function hide_icon_on_classic_checkout( $icon_html, $gateway_id ): string {
+		if ( $this->id === $gateway_id ) {
+			return '';
+		}
+		return $icon_html;
 	}
+
+	private function is_store_country_supported(): bool {
+		if ( ! function_exists( 'WC' ) ) {
+			return false;
+		}
+		$store_country = WC()->countries->get_base_country();
+		if ( in_array( $store_country, $this->countries, true ) ) {
+			return true;
+		}
+		WC_Clover_Logger::notice( 'Clover Payments is not available in ' . $store_country . '.' );
+		return false;
+	}
+
+	public function is_available(): bool {
+		if ( empty( $this->merchant ) ) {
+			WC_Clover_Logger::error( 'Merchant ID is not set.' );
+			return false;
+		}
+		if ( empty( $this->publishable_key ) ) {
+			WC_Clover_Logger::error( 'Public Key is not set.' );
+			return false;
+		}
+		if ( empty( $this->private_key) ) {
+			WC_Clover_Logger::error( 'Private Key is not set.' );
+			return false;
+		}
+		if ( ! $this->test_mode && ! is_ssl() ) {
+			WC_Clover_Logger::error( 'Page is not using SSL.' );
+			return false;
+		}
+
+		return parent::is_available() && $this->is_store_country_supported();
+	}
+
 }

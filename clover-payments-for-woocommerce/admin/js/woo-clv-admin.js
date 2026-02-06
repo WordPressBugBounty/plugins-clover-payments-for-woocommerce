@@ -1,42 +1,36 @@
-/**
- * Gateway Script
- *
- * @package woo-clover-payments
- */
+/* global cloverAdminVars */
 
-jQuery( document ).ready( function () {
-	let environment = jQuery(
-		'#woocommerce_clover_payments_environment'
-	).val();
-	hideshow( environment );
-	jQuery( '#woocommerce_clover_payments_environment' ).on(
-		'change',
-		function () {
-			hideshow( this.value );
-		}
-	);
+jQuery( function ( $ ) {
+	'use strict';
 
-	$( document ).on(
-		'click',
-		'.clv-wc-payment-gateway-capture',
-		function ( e ) {
-			alert( 'capture' );
-		}
-	);
-} );
+	const $environmentSelect = $( '#woocommerce_clover_payments_environment' );
+	const $sandboxFields = $( '.clvsdfields' ).closest( 'tr' );
+	const $productionFields = $( '.clvfields' ).closest( 'tr' );
+	const $paymentMethodDescription = $('h2.wc-admin-header + p');
 
-/**
- * Sandbox or Production fields.
- *
- * @param {type} environment
- * @returns {undefined}
- */
-function hideshow( environment ) {
-	if ( environment == 'sandbox' ) {
-		jQuery( '.clvsdfields' ).closest( 'tr' ).show();
-		jQuery( '.clvfields' ).closest( 'tr' ).hide();
-	} else {
-		jQuery( '.clvsdfields' ).closest( 'tr' ).hide();
-		jQuery( '.clvfields' ).closest( 'tr' ).show();
+	const $requiredText = $( '<span>', {
+		'class': 'clover-required',
+		'html': '<strong>*</strong>' + cloverAdminVars.textRequired
+	} );
+
+	$paymentMethodDescription
+		.append( '<br>' )
+		.append( ' ' + cloverAdminVars.textLearnMore )
+		.append( '<br><br>' )
+		.append( $requiredText );
+
+	function toggleEnvironmentFields( environment ) {
+		const isSandbox = ( environment === 'sandbox' );
+		$sandboxFields.toggle( isSandbox );
+		$productionFields.toggle( ! isSandbox );
 	}
-}
+
+	$environmentSelect.on( 'change', function () {
+		toggleEnvironmentFields( this.value );
+	} ).trigger( 'change' );
+
+	$( document ).on( 'click', '.clv-wc-payment-gateway-capture', function ( e ) {
+		e.preventDefault();
+		alert( 'capture' );
+	} );
+} );

@@ -1,20 +1,12 @@
 === Clover Payments for WooCommerce===
 Contributors: cloverecommerce
-Tags: clover, credit card, payment request
-Plugin Name: Clover Payments for WooCommerce
-Plugin URI: https://wordpress.org/plugins/clover-payments-for-woocommerce/
-Description: Accepting payments in WooCommerce using Clover eCommerce.
-Version: 2.2.0
+Tags: clover, credit card, payment request, apple pay, woocommerce, payment, payment gateway
 Requires at least: 6.1
-Tested up to: 6.7
+Tested up to: 6.8
+Stable tag: 2.3.0
 Requires PHP: 7.4
-Author: Clover eCommerce
-Author URI: https://www.clover.com
 License: BSD-3-Clause-Clear
 License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
-Text Domain: woo-clv-payments
-Domain Path: /languages
-Stable tag: 2.2.0
 
 The Clover Payments plugin enables merchants that use WooCommerce to process online card payments using Clover.
 
@@ -37,6 +29,7 @@ Clover's privacy statement can be found [here](https://www.clover.com/privacy-po
 * Authorize only
 * Capture
 * Charge (Authorize and Capture)
+* Apple Pay
 * Refund
 * Void
 * PCI Compliance through iFrames
@@ -74,14 +67,23 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 10. Clover Payment Admin Order details - card details
 11. Clover Payment My account Order details - card details
 12. Clover Payment card details on invoice page
+13. Apple Pay for WooCommerce block-based checkout
 
 == Changelog ==
 
-2025-06-23 - Version 2.2.0
+2025-10-22 - Version 2.3.0
 
-* Added - "Cardholder Name" field to payment form
-* Added - Accepted card networks icons
-* Added - Admin settings "Merchant ID" validation
+* New - Apple Pay for block-based Checkout.
+* New - Silent Apple Pay domain registration and deregistration.
+* Changed - Remove branded card network icons from payment form and replaced with a generic card icon.
+* Changed - Dedicated payment processing via Store API for block-based Checkout. 
+* Add - Clover quatrefoil as gateway icon.
+* Add - Conditional gateway availability with store country allowance check.
+* Add - Permalink structure validation for Apple Pay domain registration. 
+* Tweak - Improved Merchant ID validation.
+* Updated - Classic Checkout payment form structure and styling.
+* Fix - Payment form not displaying on Pay for Order page.
+* Fix - Improper registration of Clover checkout block support.
 
 == Installation ==
 

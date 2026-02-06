@@ -1,5 +1,13 @@
 *** Clover Payments for WooCommerce Changelog ***
 
+2025-06-23 - version 2.2.0
+* Add - Added "Cardholder Name" field to payment form.
+* Add - Added accepted card networks icons.
+* Add - Added admin settings "Merchant ID" validation.
+
+2025-01-13 - version 2.1.0
+* Added - Support for shortcode (classic) Checkout.
+
 2024-12-11 - version 2.0.0
 * Add - Support for Checkout Block.
 * New - Payment card form style.
