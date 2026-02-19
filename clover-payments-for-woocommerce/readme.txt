@@ -3,7 +3,7 @@ Contributors: cloverecommerce
 Tags: clover, credit card, payment request, apple pay, woocommerce, payment, payment gateway
 Requires at least: 6.1
 Tested up to: 6.8
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 Requires PHP: 7.4
 License: BSD-3-Clause-Clear
 License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
@@ -71,19 +71,10 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 
 == Changelog ==
 
-2025-10-22 - Version 2.3.0
+2026-02-03 - Version 2.3.1
 
-* New - Apple Pay for block-based Checkout.
-* New - Silent Apple Pay domain registration and deregistration.
-* Changed - Remove branded card network icons from payment form and replaced with a generic card icon.
-* Changed - Dedicated payment processing via Store API for block-based Checkout. 
-* Add - Clover quatrefoil as gateway icon.
-* Add - Conditional gateway availability with store country allowance check.
-* Add - Permalink structure validation for Apple Pay domain registration. 
-* Tweak - Improved Merchant ID validation.
-* Updated - Classic Checkout payment form structure and styling.
-* Fix - Payment form not displaying on Pay for Order page.
-* Fix - Improper registration of Clover checkout block support.
+* Fix - Remove conflicting custom checkout nonce.
+* Fix - Support for US territories.
 
 == Installation ==
 

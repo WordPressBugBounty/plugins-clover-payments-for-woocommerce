@@ -1,6 +1,6 @@
 The Clear BSD License
 
-Copyright (c) 2022-2025 Clover Network, LLC, or its affiliates <https://www.clover.com/>
+Copyright (c) 2022-2026 Clover Network, LLC, or its affiliates <https://www.clover.com/>
 
 All rights reserved.
 

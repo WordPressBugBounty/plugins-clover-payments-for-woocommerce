@@ -93,7 +93,6 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return string[] An array of script handles.
 	 */
 	public function get_payment_method_script_handles(): array {
-		error_log( print_r( has_block( 'woocommerce/checkout' ), true ) );
 		$script_path       = '/build/index.js';
 		$style_path        = '/build/index.css';
 		$script_asset_path = WC_CLOVER_PAYMENTS_PLUGIN_PATH . '/build/index.asset.php';
@@ -163,7 +162,6 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 			'publicKey'         => $this->get_setting( WC_Clover_Settings_Keys::PUBLIC_KEY ),
 			'locale'            => WC_Clover_Helper::get_clover_compatible_locale(),
 			'title'             => $this->get_setting( WC_Clover_Settings_Keys::TITLE ),
-			'checkoutNonce'     => WC_Clover_Helper::create_checkout_nonce(),
 			'cloverURL'         => $this->test_mode ?
 				WC_Clover_API::SANDBOX_CLOVER_API :
 				WC_Clover_API::PRODUCTION_CLOVER_API,
@@ -186,13 +184,6 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 	 */
 	private function get_source_from_context( PaymentContext $context ): string {
 		$payment_data = $context->payment_data ?? [];
-		$nonce = wc_clean( $payment_data['clover_checkout_nonce'] ?? '' );
-
-		if ( ! wp_verify_nonce( $nonce, 'clover_process_checkout' ) ) {
-			WC_Clover_Logger::error( 'Clover Blocks Payment Processing: Invalid nonce.' );
-			throw new Exception( 'unexpected' );
-		}
-
 		$source = isset( $payment_data['clover_source'] ) ? wc_clean( $payment_data['clover_source'] ) : '';
 
 		if ( empty( $source ) ) {
@@ -223,7 +214,7 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 					'Expected' => $this->name,
 					'Got'      => $context->payment_method,
 				) );
-				throw new Exception( 'unexpected' );
+				return;
 			}
 
 			$source    = $this->get_source_from_context( $context );

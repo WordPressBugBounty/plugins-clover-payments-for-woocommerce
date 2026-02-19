@@ -1,10 +1,10 @@
-# Copyright (C) 2025 Clover eCommerce
+# Copyright (C) 2026 Clover eCommerce
 # This file is distributed under the BSD-3-Clause-Clear.
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover Payments for WooCommerce 2.2.0\n"
+"Project-Id-Version: Clover Payments for WooCommerce 2.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/clover-payment-for-woocommerce\n"
-"POT-Creation-Date: 2025-10-23T19:01:03+00:00\n"
+"POT-Creation-Date: 2026-02-03T18:56:25+00:00\n"
 "PO-Revision-Date: 2025-10-23T19:01:03+00:00\n"
 "Last-Translator: Clover\n"
 "Language-Team: Clover\n"
@@ -60,7 +60,7 @@ msgid "We were unable to connect to the Apple Pay service. Try again."
 msgstr "Nous n'avons pas pu nous connecter au service Apple Pay. Veuillez réessayer."
 
 #: includes/class-woo-clv-admin-capture.php:55
-#: includes/class-woo-clv-admin.php:583
+#: includes/class-woo-clv-admin.php:587
 msgid "Capture Charge"
 msgstr "Frais de capture"
 
@@ -107,38 +107,38 @@ msgstr "L'ID du compte test du commerçant est absent."
 msgid "Sandbox Merchant ID is invalid."
 msgstr "L'ID du compte test du commerçant est invalide."
 
-#: includes/class-woo-clv-admin.php:503
+#: includes/class-woo-clv-admin.php:507
 #: includes/class-woo-clv-errormapper.php:48
 msgid "Transaction could not be processed. Please try again."
 msgstr "Impossible de traiter la transaction. Veuillez réessayer."
 
-#: includes/class-woo-clv-admin.php:528
-#: includes/class-woo-clv-blocks-support.php:239
+#: includes/class-woo-clv-admin.php:532
+#: includes/class-woo-clv-blocks-support.php:258
 msgid "Awaiting offline payment."
 msgstr "En attente de paiement hors ligne."
 
-#: includes/class-woo-clv-admin.php:551
+#: includes/class-woo-clv-admin.php:555
 msgid "An error has occurred, please try again"
 msgstr ""
 
-#: includes/class-woo-clv-admin.php:598
+#: includes/class-woo-clv-admin.php:602
 msgid "Please select the correct order."
 msgstr "Veuillez sélectionner la bonne commande."
 
-#: includes/class-woo-clv-admin.php:606
+#: includes/class-woo-clv-admin.php:610
 msgid "Unable to capture canceled, refunded, or failed orders."
 msgstr "Impossible de capturer pour les commandes annulées, remboursées ou échouées."
 
-#: includes/class-woo-clv-admin.php:614
+#: includes/class-woo-clv-admin.php:618
 msgid "Already captured: unable to process again."
 msgstr "Déjà capturé : Impossible de traiter à nouveau."
 
 #. translators: %1$s: amount, %2$s: capture ID, %3$s: status
-#: includes/class-woo-clv-admin.php:634
+#: includes/class-woo-clv-admin.php:638
 msgid "Captured %1$s - Capture ID: %2$s - Status: %3$s"
 msgstr "%1$s capturé - ID de capture : %2$s - État : %3$s"
 
-#: includes/class-woo-clv-admin.php:662
+#: includes/class-woo-clv-admin.php:666
 msgid "An error has occurred; please try again."
 msgstr "Une erreur s’est produite : veuillez réessayer."
 
@@ -385,11 +385,11 @@ msgstr "Impossible d'effectuer la transaction."
 msgid "WooCommerce Clover Payment Gateway: We require WooCommerce to be installed and active. You can download it here"
 msgstr "Passerelle de paiement Clover pour WooCommerce : WooCommerce doit être installé et actif. Vous pouvez le télécharger ici"
 
-#: build/index.js:1 build/index.js:2128
+#: build/index.js:1 build/index.js:2123
 msgid "(0002) Transaction could not be processed. Please contact support."
 msgstr "(0002) Impossible de traiter la transaction. Veuillez communiquer avec le support."
 
-#: build/index.js:1 build/index.js:2138
+#: build/index.js:1 build/index.js:2133
 msgid "(0001) Transaction could not be processed. Please contact support."
 msgstr "(0001) Impossible de traiter la transaction. Veuillez communiquer avec le support."
 

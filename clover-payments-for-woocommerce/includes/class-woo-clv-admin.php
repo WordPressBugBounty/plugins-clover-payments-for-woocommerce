@@ -44,7 +44,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 			'products',
 			'refunds'
 		);
-		$this->countries = array( 'US', 'CA' );
+		$this->countries = array( 'US', 'CA', 'PR', 'VI', 'GU', 'MP', 'AS' );
 
 		$this->init_form_fields();
 
