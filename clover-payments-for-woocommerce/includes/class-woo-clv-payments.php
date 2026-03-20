@@ -70,7 +70,7 @@ final class WC_Clover_Payments {
 	}
 
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'woo-clv-payments', false, dirname( plugin_basename( WC_CLOVER_PAYMENTS_MAIN_FILE ) ) . '/languages/' );
+		load_plugin_textdomain( 'clover-payments-for-woocommerce', false, dirname( plugin_basename( WC_CLOVER_PAYMENTS_MAIN_FILE ) ) . '/languages/' );
 	}
 
 	public function wc_clv_payment_card_info_on_invoice_page ( $template_type, $order ): void {

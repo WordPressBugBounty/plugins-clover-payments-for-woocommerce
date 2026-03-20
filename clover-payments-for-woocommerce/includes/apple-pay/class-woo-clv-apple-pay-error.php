@@ -2,7 +2,7 @@
 	/**
 	 * File for handling Apple Pay error messages.
 	 *
-	 * @package woo-clv-payments
+	 * @package clover-payments-for-woocommerce
 	 * @since   2.3.0
 	 */
 
@@ -79,25 +79,25 @@
 			self::$errors = array(
 				self::INELIGIBLE => wp_sprintf(
 				/* translators: 1: Opening HTML element, 2. Closing HTML element */
-					__( 'Apple Pay cannot be enabled. Please contact Clover Support at %1$swordpress@clover.com%2$s to review your account\'s eligibility for this feature.', 'woo-clv-payments' ),
+					__( 'Apple Pay cannot be enabled. Please contact Clover Support at %1$swordpress@clover.com%2$s to review your account\'s eligibility for this feature.', 'clover-payments-for-woocommerce' ),
 					'<a href="mailto:wordpress@clover.com" >',
 					'</a>'
 				),
 				self::CRITICAL   => wp_sprintf(
 				/* translators: 1: Opening HTML element, 2. Closing HTML element */
-					__( 'Apple Pay cannot be enabled. Please contact Clover Support at %1$swordpress@clover.com%2$s to review your account.', 'woo-clv-payments' ),
+					__( 'Apple Pay cannot be enabled. Please contact Clover Support at %1$swordpress@clover.com%2$s to review your account.', 'clover-payments-for-woocommerce' ),
 					'<a href="mailto:wordpress@clover.com" >',
 					'</a>'
 				),
 				self::INVALID_PERMALINK => wp_sprintf(
 				/* translators: 1: Opening HTML element, 2. Closing HTML element */
-				__( 'Apple Pay cannot be enabled. Permalinks cannot be "Plain"; click %1$shere%2$s to change your Permalink structure.', 'woo-clv-payments' ),
+				__( 'Apple Pay cannot be enabled. Permalinks cannot be "Plain"; click %1$shere%2$s to change your Permalink structure.', 'clover-payments-for-woocommerce' ),
 				'<a href="' . admin_url( 'options-permalink.php' ) . '" >',
 				'</a>'
 				),
 				self::DEFAULT    => __(
 					'We were unable to connect to the Apple Pay service. Try again.',
-					'woo-clv-payments'
+					'clover-payments-for-woocommerce'
 				),
 			);
 		}

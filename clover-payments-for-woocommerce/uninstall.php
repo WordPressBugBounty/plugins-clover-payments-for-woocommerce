@@ -2,7 +2,7 @@
 	/**
 	 * Clover Payments Uninstaller
 	 *
-	 * @package woo-clover-payments
+	 * @package clover-payments-for-woocommerce
 	 */
 
 	if ( ! defined( 'ABSPATH' ) ) {

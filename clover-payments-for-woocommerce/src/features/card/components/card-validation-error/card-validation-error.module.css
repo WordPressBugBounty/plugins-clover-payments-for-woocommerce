@@ -1,0 +1,20 @@
+.validationInputError__wrapper {
+	display: inline-block;
+	margin-top: 0.25rem;
+	font-size: 0.875rem;
+	font-weight: 400;
+	color: #e70000;
+	font-family: Graphik, Helvetica, sans-serif;
+	height: 20px;
+}
+
+.validationInputError {
+	margin: 0;
+	height: 100%;
+}
+
+.errorIcon {
+	vertical-align: -4.75px;
+	margin-right: 0.2rem;
+	fill: #e70000;
+}

@@ -1,5 +1,10 @@
 *** Clover Payments for WooCommerce Changelog ***
 
+2026-02-03 - Version 2.3.1
+
+* Fix - Remove conflicting custom checkout nonce.
+* Fix - Support for US territories.
+
 2025-10-22 - Version 2.3.0
 
 * New - Apple Pay for block-based Checkout.

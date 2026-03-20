@@ -2,7 +2,7 @@
 /**
  * Gateway class
  *
- * @package woo-clover-payments
+ * @package clover-payments-for-woocommerce
  */
 
 if (! defined('ABSPATH') ) {
@@ -30,7 +30,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Please enter refund value.', 'woo-clv-payments')
+                        __('Please enter refund value.', 'clover-payments-for-woocommerce')
                     )
                 );
             }
@@ -40,7 +40,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Please select a valid order to refund.', 'woo-clv-payments')
+                        __('Please select a valid order to refund.', 'clover-payments-for-woocommerce')
                     )
                 );
             }
@@ -52,7 +52,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 return new WP_Error(
                     'clover_error',
                     sprintf(
-                        __('Unable to process partial void transaction.', 'woo-clv-payments')
+                        __('Unable to process partial void transaction.', 'clover-payments-for-woocommerce')
                     )
                 );
             }
@@ -71,7 +71,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 if ($order->get_date_paid() ) {
                     $refund_message = sprintf(
                     /* translators: %1$s: refund amount, %2$s: refund transaction ID, %3$s: refund status */
-                    __( 'Refunded %1$s - Refund ID: %2$s - Status: %3$s', 'woo-clv-payments' ),
+                    __( 'Refunded %1$s - Refund ID: %2$s - Status: %3$s', 'clover-payments-for-woocommerce' ),
 						$amount, $processed_response['TXN_ID'], $refund_message
                     );
 
@@ -80,7 +80,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
                 } else {
                     $refund_message = sprintf(
                     /* translators: %1$s: refund amount, %2$s: void transaction ID, %3$s: refund status */
-                    __( 'Voided %1$s - Void ID: %2$s - Status: %3$s', 'woo-clv-payments' ),
+                    __( 'Voided %1$s - Void ID: %2$s - Status: %3$s', 'clover-payments-for-woocommerce' ),
 						$amount, $processed_response['TXN_ID'], $refund_message
                     );
 
@@ -95,11 +95,11 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
 
                 return new WP_Error(
                     'clover_error',
-                    sprintf( 'Error:' . $failure_message )
+	                'Error:' . $failure_message
                 );
             }
         } catch ( Exception $e ) {
-            throw new Exception($e->getMessage());
+            return new WP_Error( 'clover_error', $e->getMessage() );
         }
     }
 
@@ -122,7 +122,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
 	        $processed_response['message'] = $response['data']->status;
 
 	    } elseif ( $response['status_code'] === 0 ) {
-	        $processed_response['message']    = __('Unable to complete transaction.', 'woo-clv-payments');
+	        $processed_response['message']    = __('Unable to complete transaction.', 'clover-payments-for-woocommerce');
 	        $processed_response['error_code'] = 'unexpected';
 
 	    } else {
@@ -140,7 +140,7 @@ class WOO_CLV_GATEWAY extends WC_Payment_Gateway_CC
 	                $processed_response['error_code'] = 'invalid_key';
 
 	            } else {
-	                $processed_response['message']    = __('Unable to complete transaction.', 'woo-clv-payments');
+	                $processed_response['message']    = __('Unable to complete transaction.', 'clover-payments-for-woocommerce');
 	                $processed_response['error_code'] = 'unexpected';
 	            }
 	        }

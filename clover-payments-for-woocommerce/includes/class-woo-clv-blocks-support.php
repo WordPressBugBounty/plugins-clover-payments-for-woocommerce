@@ -139,7 +139,7 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 
 		wp_set_script_translations(
 			'wc-clover-payments-checkout-block-integration',
-			'woo-clv-payments',
+			'clover-payments-for-woocommerce',
 			WC_CLOVER_PAYMENTS_PLUGIN_PATH . '/languages/'
 		);
 
@@ -255,7 +255,7 @@ final class WC_Clover_Blocks_Support extends AbstractPaymentMethodType {
 					$context->order->set_transaction_id( $data->id );
 					$context->order->update_status(
 						'on-hold',
-						__( 'Awaiting offline payment.', 'woo-clv-payments' )
+						__( 'Awaiting offline payment.', 'clover-payments-for-woocommerce' )
 					);
 				}
 

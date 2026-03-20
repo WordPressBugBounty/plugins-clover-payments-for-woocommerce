@@ -14,127 +14,127 @@ Class WC_Clover_Form_Fields {
 	public static function get_form_fields( array $initial_fields ): array {
 		$new_fields = array(
 			'enabled' => array(
-				'title'       => __( 'Clover Payments', 'woo-clv-payments' ),
+				'title'       => __( 'Clover Payments', 'clover-payments-for-woocommerce' ),
 				'type'        => 'select',
 				'options' => array(
-					'yes' => __( 'Enabled', 'woo-clv-payments' ),
-					'no'  => __( 'Disabled', 'woo-clv-payments' ),
+					'yes' => __( 'Enabled', 'clover-payments-for-woocommerce' ),
+					'no'  => __( 'Disabled', 'clover-payments-for-woocommerce' ),
 				),
-				'description' => __( 'Clover Payments is available in the United States and Canada.', 'woo-clv-payments' ),
+				'description' => __( 'Clover Payments is available in the United States and Canada.', 'clover-payments-for-woocommerce' ),
 				'default'     => 'no',
 				'js_trigger'  => true,
 			),
 			'environment' => array(
-				'title'       => __( 'Environment', 'woo-clv-payments' ),
+				'title'       => __( 'Environment', 'clover-payments-for-woocommerce' ),
 				'type'        => 'select',
-				'description' => __( 'Use \'Sandbox\' for testing with a test account. Use \'Production\' for live payments.', 'woo-clv-payments' ),
+				'description' => __( 'Use \'Sandbox\' for testing with a test account. Use \'Production\' for live payments.', 'clover-payments-for-woocommerce' ),
 				'default'     => 'production',
 				'options'     => array(
-					'sandbox'    => __( 'Sandbox', 'woo-clv-payments' ),
-					'production' => __( 'Production', 'woo-clv-payments' ),
+					'sandbox'    => __( 'Sandbox', 'clover-payments-for-woocommerce' ),
+					'production' => __( 'Production', 'clover-payments-for-woocommerce' ),
 				),
 			),
 			'test_merchant_id' => array(
-				'title'       => __( 'Sandbox Merchant ID', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Sandbox Merchant ID', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'text',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Sandbox Merchant ID.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Sandbox Merchant ID.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/locating-merchant-id-1" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvsdfields',
 			),
 			'test_publishable_key' => array(
-				'title'       => __( 'Sandbox Public Key', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Sandbox Public Key', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'text',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Sandbox Public Key.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Sandbox Public Key.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/setting-up-an-api-token" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvsdfields',
 			),
 			'test_private_key' => array(
-				'title'       => __( 'Sandbox Private Key', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Sandbox Private Key', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'password',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Sandbox Private Key.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Sandbox Private Key.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/setting-up-an-api-token" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvsdfields',
 			),
 			'merchant_id' => array(
-				'title'       => __( 'Merchant ID', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Merchant ID', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'text',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Merchant ID.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Merchant ID.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/locating-merchant-id-1" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvfields',
 			),
 			'publishable_key' => array(
-				'title'       => __( 'Public Key', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Public Key', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'text',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Public Key.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Public Key.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/setting-up-an-api-token" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvfields',
 			),
 			'private_key' => array(
-				'title'       => __( 'Private Key', 'woo-clv-payments' ) . '*',
+				'title'       => __( 'Private Key', 'clover-payments-for-woocommerce' ) . '*',
 				'type'        => 'password',
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sLearn how%2$s to obtain a Private Key.', 'woo-clv-payments' ),
+				__( '%1$sLearn how%2$s to obtain a Private Key.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/setting-up-an-api-token" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'class'       => 'clvfields',
 			),
 			'payment_action' => array(
-				'title'   => __( 'Payment Action', 'woo-clv-payments' ),
+				'title'   => __( 'Payment Action', 'clover-payments-for-woocommerce' ),
 				'type'    => 'select',
 				'default' => 'charge',
 				'options' => array(
-					'charge'    => __( 'Authorize and Capture', 'woo-clv-payments' ),
-					'authorize' => __( 'Authorize', 'woo-clv-payments' ),
+					'charge'    => __( 'Authorize and Capture', 'clover-payments-for-woocommerce' ),
+					'authorize' => __( 'Authorize', 'clover-payments-for-woocommerce' ),
 				),
 			),
 			'apple_pay' => array(
-				'title'   => __( 'Apple Pay', 'woo-clv-payments' ),
-				'label'   => __( 'Enable Apple Pay', 'woo-clv-payments' ),
+				'title'   => __( 'Apple Pay', 'clover-payments-for-woocommerce' ),
+				'label'   => __( 'Enable Apple Pay', 'clover-payments-for-woocommerce' ),
 				'type'    => 'select',
 				'options' => array(
-					'yes' => __( 'Enabled', 'woo-clv-payments' ),
-					'no'  => __( 'Disabled', 'woo-clv-payments' ),
+					'yes' => __( 'Enabled', 'clover-payments-for-woocommerce' ),
+					'no'  => __( 'Disabled', 'clover-payments-for-woocommerce' ),
 				),
 				'default' => 'no',
 			),
 			'title' => array(
-				'title'       => __( 'Payment Section title', 'woo-clv-payments' ),
+				'title'       => __( 'Payment Section title', 'clover-payments-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Appears as the title of the payment form on the checkout page.', 'woo-clv-payments' ),
-				'default'     => __( 'Credit / Debit Card', 'woo-clv-payments' )
+				'description' => __( 'Appears as the title of the payment form on the checkout page.', 'clover-payments-for-woocommerce' ),
+				'default'     => __( 'Credit / Debit Card', 'clover-payments-for-woocommerce' )
 			),
 			'debug' => array(
-				'title' => __( 'Logging', 'woo-clv-payments' ),
+				'title' => __( 'Logging', 'clover-payments-for-woocommerce' ),
 				'type' => 'select',
 				'options' => array(
-					'yes' => __( 'Enabled', 'woo-clv-payments' ),
-					'no' => __( 'Disabled', 'woo-clv-payments' ),
+					'yes' => __( 'Enabled', 'clover-payments-for-woocommerce' ),
+					'no' => __( 'Disabled', 'clover-payments-for-woocommerce' ),
 				),
 				'description' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag. */
-				__( '%1$sView logs%2$s', 'woo-clv-payments' ),
+				__( '%1$sView logs%2$s', 'clover-payments-for-woocommerce' ),
 					wp_sprintf(
 						'<a href="%s" target="_blank" rel="noopener noreferrer">',
 						admin_url( 'admin.php?page=wc-status&tab=logs' )

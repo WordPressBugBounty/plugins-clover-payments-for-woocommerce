@@ -1,9 +1,9 @@
 === Clover Payments for WooCommerce===
 Contributors: cloverecommerce
-Tags: clover, credit card, payment request, apple pay, woocommerce, payment, payment gateway
+Tags: credit card, apple pay, woocommerce, payment, payment gateway
 Requires at least: 6.1
-Tested up to: 6.8
-Stable tag: 2.3.1
+Tested up to: 6.9
+Stable tag: 2.3.2
 Requires PHP: 7.4
 License: BSD-3-Clause-Clear
 License URI: https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear
@@ -71,10 +71,9 @@ No, all you need is a Clover Sandbox or Clover Production Account.
 
 == Changelog ==
 
-2026-02-03 - Version 2.3.1
+2026-03-06 - Version 2.3.2
 
-* Fix - Remove conflicting custom checkout nonce.
-* Fix - Support for US territories.
+* Fix - Text domain to match the plugin slug.
 
 == Installation ==
 

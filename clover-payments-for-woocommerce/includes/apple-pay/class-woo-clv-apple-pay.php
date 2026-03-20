@@ -5,7 +5,7 @@
  * This file contains the main class responsible for handling Apple Pay domain registration,
  * verification, and the necessary WordPress hooks for the WooCommerce Clover Payments plugin.
  *
- * @package woo-clv-payments
+ * @package clover-payments-for-woocommerce
  * @since   2.3.0
  * @version 1.0.0
  */

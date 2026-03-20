@@ -3,7 +3,7 @@
 /**
  * Admin class
  *
- * @package woo-clover-payments
+ * @package clover-payments-for-woocommerce
  */
 
 if (!defined('ABSPATH')) {
@@ -38,8 +38,8 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		$this->id = 'clover_payments';
 		$this->icon = WC_CLOVER_PAYMENTS_PLUGIN_URL . '/assets/images/clover-logo-quatrefoil.svg';
 		$this->has_fields = true;
-		$this->method_title = __('Clover Payments', 'woo-clv-payments');
-		$this->method_description = __( 'Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business.', 'woo-clv-payments' );
+		$this->method_title = __('Clover Payments', 'clover-payments-for-woocommerce');
+		$this->method_description = __( 'Clover simplifies the lives of small businesses with tailored, all-in-one payments, and business management systems that can be implemented quickly and grow with the business.', 'clover-payments-for-woocommerce' );
 		$this->supports = array(
 			'products',
 			'refunds'
@@ -190,10 +190,10 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 			'clover_admin_js',
 			'cloverAdminVars',
 			array(
-				'textRequired'  => __( 'Required', 'woo-clv-payments' ),
+				'textRequired'  => __( 'Required', 'clover-payments-for-woocommerce' ),
 				'textLearnMore' => wp_sprintf(
 				/* translators: %1$s: opening anchor tag, %2$s: closing anchor tag */
-				__( '%1$sLearn more%2$s about the integration.', 'woo-clv-payments' ),
+				__( '%1$sLearn more%2$s about the integration.', 'clover-payments-for-woocommerce' ),
 					'<a href="https://docs.clover.com/dev/docs/woocommerce" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				)
@@ -260,12 +260,12 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		}
 
 		if ( empty( $value ) ) {
-			$message = __( 'Merchant ID is missing.', 'woo-clv-payments' );
+			$message = __( 'Merchant ID is missing.', 'clover-payments-for-woocommerce' );
 			$log_msg = 'Empty Merchant ID was submitted.';
 		} else if ( preg_match('/^[A-HJKMNP-TV-Z0-9]{13}$/i', $value ) ) {
 			return $value;
     	} else {
-			$message = __( 'Merchant ID is invalid.', 'woo-clv-payments' );
+			$message = __( 'Merchant ID is invalid.', 'clover-payments-for-woocommerce' );
 			$log_msg = 'Invalid Merchant ID was submitted.';
 		}
 
@@ -296,12 +296,12 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		}
 
 		if ( empty( $value ) ) {
-			$message = __( 'Sandbox Merchant ID is missing.', 'woo-clv-payments' );
+			$message = __( 'Sandbox Merchant ID is missing.', 'clover-payments-for-woocommerce' );
 			$log_msg = 'Empty Sandbox Merchant ID was submitted.';
 		} else if ( preg_match('/^[A-HJKMNP-TV-Z0-9]{13}$/i', $value ) ) {
 			return $value;
 		} else {
-			$message = __( 'Sandbox Merchant ID is invalid.', 'woo-clv-payments' );
+			$message = __( 'Sandbox Merchant ID is invalid.', 'clover-payments-for-woocommerce' );
 			$log_msg = 'Invalid Sandbox Merchant ID was submitted.';
 		}
 
@@ -504,7 +504,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 				WC_Clover_Logger::warning( 'Transaction could not be processed: Clover Token does not exist.' );
 
 				$order->update_status( 'failed' );
-				$failure_message = __( 'Transaction could not be processed. Please try again.', 'woo-clv-payments' );
+				$failure_message = __( 'Transaction could not be processed. Please try again.', 'clover-payments-for-woocommerce' );
 				wc_add_notice( $failure_message, 'error' );
 				return array(
 					'result' => 'failure',
@@ -529,7 +529,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 					$order->set_transaction_id( $processed_response['TXN_ID'] );
 					$order->update_status(
 						'on-hold',
-						__( 'Awaiting offline payment.', 'woo-clv-payments' )
+						__( 'Awaiting offline payment.', 'clover-payments-for-woocommerce' )
 					);
 				}
 
@@ -552,7 +552,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		} catch (Exception $e) {
 
 			$order->update_status('failed');
-			$failure_message = __('An error has occurred, please try again', 'woo-clv-payments');
+			$failure_message = __('An error has occurred, please try again', 'clover-payments-for-woocommerce');
 			wc_add_notice( $failure_message, 'error');
 			return array(
 				'result' => 'failure',
@@ -584,7 +584,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		?>
         <button data-order_id_nonce="<?php echo esc_attr($order_id_nonce); ?>"
                 data-order_id="<?php echo esc_attr($order->get_id()); ?>" type="button"
-                class="button button-primary clv-wc-payment-gateway-capture"><?php esc_html_e('Capture Charge', 'woo-clv-payments'); ?></button>
+                class="button button-primary clv-wc-payment-gateway-capture"><?php esc_html_e('Capture Charge', 'clover-payments-for-woocommerce'); ?></button>
 		<?php
 	}
 
@@ -599,7 +599,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		if ( ! ( $order->payment_method === $this->id ) ) {
 			return array(
 				'success' => false,
-				'message' => __('Please select the correct order.', 'woo-clv-payments'),
+				'message' => __('Please select the correct order.', 'clover-payments-for-woocommerce'),
 				'code' => 400,
 				'processed' => false,
 			);
@@ -607,7 +607,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		if ( in_array( $order->get_status(), array( 'cancelled', 'refunded', 'failed' ), true ) ) {
 			return array(
 				'success' => false,
-				'message' => __('Unable to capture canceled, refunded, or failed orders.', 'woo-clv-payments'),
+				'message' => __('Unable to capture canceled, refunded, or failed orders.', 'clover-payments-for-woocommerce'),
 				'code' => 400,
 				'processed' => false,
 			);
@@ -615,7 +615,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		if ( $order->get_date_paid() ) {
 			return array(
 				'success' => false,
-				'message' => __('Already captured: unable to process again.', 'woo-clv-payments'),
+				'message' => __('Already captured: unable to process again.', 'clover-payments-for-woocommerce'),
 				'code' => 400,
 				'processed' => false,
 			);
@@ -635,7 +635,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 
 				$message = wp_sprintf(
 				/* translators: %1$s: amount, %2$s: capture ID, %3$s: status */
-				__('Captured %1$s - Capture ID: %2$s - Status: %3$s', 'woo-clv-payments'),
+				__('Captured %1$s - Capture ID: %2$s - Status: %3$s', 'clover-payments-for-woocommerce'),
 					$amount, $processed_response['TXN_ID'], $message
 				);
 
@@ -663,7 +663,7 @@ class WOO_CLV_ADMIN extends WOO_CLV_GATEWAY {
 		} catch (Exception $e) {
 			$order->update_status('failed');
 			wc_add_notice(
-				esc_html__('An error has occurred; please try again.', 'woo-clv-payments'),
+				esc_html__('An error has occurred; please try again.', 'clover-payments-for-woocommerce'),
 				'error'
 			);
 			return array(

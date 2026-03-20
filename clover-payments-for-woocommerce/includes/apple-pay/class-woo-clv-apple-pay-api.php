@@ -4,7 +4,7 @@
 	 *
 	 * This file handles communication with the Clover API for Apple Pay domain management.
 	 *
-	 * @package woo-clover-payments
+	 * @package clover-payments-for-woocommerce
 	 * @since   2.3.0
 	 * @version 1.0.0
 	 */

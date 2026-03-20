@@ -1,7 +1,7 @@
 /**
  * Gateway Script
  *
- * @package woo-clover-payments
+ * @package clover-payments-for-woocommerce
  */
 
 ( function ( $ ) {
